@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTS Chapter 99 - Revision Comparison Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-elevated: #1a1a24;
+            --accent: #7c3aed;
+            --accent-glow: rgba(124, 58, 237, 0.3);
+            --green: #10b981;
+            --red: #ef4444;
+            --amber: #f59e0b;
+            --text: #f4f4f5;
+            --text-dim: #a1a1aa;
+            --border: #27272a;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg) 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 48px 24px;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero .subtitle {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+        }
+        
+        .hero .date {
+            margin-top: 16px;
+            font-size: 0.875rem;
+            color: var(--text-dim);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            max-width: 1000px;
+            margin: -40px auto 0;
+            padding: 0 24px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+        
+        .stat-card.highlight {
+            border-color: var(--accent);
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+        
+        .stat-value.green { color: var(--green); }
+        .stat-value.red { color: var(--red); }
+        .stat-value.amber { color: var(--amber); }
+        
+        .stat-label {
+            color: var(--text-dim);
+            font-size: 0.875rem;
+            margin-top: 8px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .key-insight {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+            border: 1px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 32px;
+        }
+        
+        .key-insight h3 {
+            color: var(--accent);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .key-insight p {
+            color: var(--text);
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+        }
+        
+        .filter-btn:hover {
+            border-color: var(--accent);
+        }
+        
+        .filter-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        
+        .filter-btn .count {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            padding: 10px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.875rem;
+            font-family: inherit;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .diff-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        
+        .diff-card:hover {
+            border-color: var(--accent);
+        }
+        
+        .diff-card.added { border-left: 4px solid var(--green); }
+        .diff-card.removed { border-left: 4px solid var(--red); }
+        .diff-card.modified { border-left: 4px solid var(--amber); }
+        
+        .diff-header {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            cursor: pointer;
+            background: var(--bg-elevated);
+            gap: 12px;
+        }
+        
+        .diff-path {
+            flex: 1;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .similarity-badge {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--amber);
+            border-radius: 4px;
+        }
+        
+        .diff-badge {
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .diff-badge.added { background: rgba(16, 185, 129, 0.2); color: var(--green); }
+        .diff-badge.removed { background: rgba(239, 68, 68, 0.2); color: var(--red); }
+        .diff-badge.modified { background: rgba(245, 158, 11, 0.2); color: var(--amber); }
+        
+        .chevron {
+            transition: transform 0.2s;
+            color: var(--text-dim);
+        }
+        
+        .diff-card.expanded .chevron {
+            transform: rotate(180deg);
+        }
+        
+        .diff-body {
+            display: none;
+            border-top: 1px solid var(--border);
+        }
+        
+        .diff-card.expanded .diff-body {
+            display: block;
+        }
+        
+        .diff-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+        
+        .diff-panel {
+            padding: 20px;
+        }
+        
+        .diff-panel.old {
+            background: rgba(239, 68, 68, 0.05);
+            border-right: 1px solid var(--border);
+        }
+        
+        .diff-panel.new {
+            background: rgba(16, 185, 129, 0.05);
+        }
+        
+        .panel-header {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        
+        .diff-panel.old .panel-header { color: var(--red); }
+        .diff-panel.new .panel-header { color: var(--green); }
+        
+        .panel-content {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+            color: var(--text-dim);
+        }
+        
+        .panel-content .empty {
+            color: var(--text-dim);
+            opacity: 0.5;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 60px;
+            color: var(--text-dim);
+        }
+        
+        .print-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 24px;
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 20px var(--accent-glow);
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        
+        .print-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--accent-glow);
+        }
+        
+        .expand-all-btn {
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        
+        .expand-all-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        @media print {
+            .filters, .print-btn, .expand-all-btn { display: none !important; }
+            .diff-body { display: block !important; }
+            body { background: white; color: black; }
+            .diff-card { break-inside: avoid; }
+        }
+        
+        @media (max-width: 768px) {
+            .diff-grid { grid-template-columns: 1fr; }
+            .diff-panel.old { border-right: none; border-bottom: 1px solid var(--border); }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>📊 HTS Chapter 99 Comparison</h1>
+        <p class="subtitle">Revision 28 → Revision 29</p>
+        <p class="date">Generated: December 03, 2025 at 02:23 PM</p>
+    </div>
+    
+    <div class="stats-grid">
+        <div class="stat-card highlight">
+            <div class="stat-value">23</div>
+            <div class="stat-label">Total Changes</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value green">13</div>
+            <div class="stat-label">Added</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value red">8</div>
+            <div class="stat-label">Removed</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value amber">2</div>
+            <div class="stat-label">Modified</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">4472</div>
+            <div class="stat-label">Items in Rev28</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">4477</div>
+            <div class="stat-label">Items in Rev29</div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="key-insight">
+            <h3>📌 Key Insight</h3>
+            <p>This report compares HTS Chapter 99 between Rev28 and Rev29. 
+            Found <strong>13 new provisions</strong>, <strong>8 removed provisions</strong>, 
+            and <strong>2 modifications</strong> to existing text.
+            Click on any item below to expand and see the full details.</p>
+        </div>
+        
+        <h2 class="section-title">📋 Change Details</h2>
+        
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">
+                All <span class="count">23</span>
+            </button>
+            <button class="filter-btn" data-filter="added" onclick="setFilter('added')">
+                ➕ Added <span class="count">13</span>
+            </button>
+            <button class="filter-btn" data-filter="removed" onclick="setFilter('removed')">
+                ➖ Removed <span class="count">8</span>
+            </button>
+            <button class="filter-btn" data-filter="modified" onclick="setFilter('modified')">
+                ✏️ Modified <span class="count">2</span>
+            </button>
+            <input type="text" class="search-box" id="searchBox" placeholder="Search by path or content..." oninput="applySearch()">
+            <button class="expand-all-btn" onclick="toggleExpandAll()">Expand All</button>
+        </div>
+        
+        <div id="diffContainer">
+            
+        <div class="diff-card added" data-type="added">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_III/2./page:173/(v)/(iii)/page:177/(a)/page:178</span>
+                
+                <span class="diff-badge added">ADDED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content"><em class="empty">Not present in Rev28</em></div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content">As provided for in heading 9903.01.32, the additional duties imposed by headings 9903.01.25, 9903.01.35, 9903.01.39, 9903.01.63, and 9903.02.01-9903.02.73 shall not apply to products classified in the following subheadings of the HTSUS:
+[Compiler&#39;s note: List may appear or continue on a subsequent page.]
+0201.10.05
+0201.10.10
+0201.10.50
+0201.20.02
+0201.20.04
+0201.20.06
+0201.20.10
+0201.20.30
+0201.20.50
+0201.20.80
+0201.30.02
+0201.30.04
+0201.30.06
+0201.30.10
+0201.30.30
+0201.30.50
+0201.30.80
+0202.10.05
+0202.10.10
+0202.10.50
+0202.20.02
+0202.20.04
+0202.20.06
+0202.20.10
+0202.20.30
+0202.20.50
+0202.20.80
+0202.30.02
+0202.30.04
+0202.30.06
+0202.30.10
+0202.30.30
+0202.30.50
+0202.30.80
+0206.10.00
+0206.21.00
+0206.22.00
+0206.29.00
+0210.20.00
+0508.00.00
+0702.00.20
+0702.00.40
+0702.00.60
+0709.99.05
+0709.99.10
+0710.80.15
+0711.90.30
+0712.32.00
+0712.34.10
+0712.34.20
+0713.34.20
+0713.34.40
+0714.10.10
+0714.10.20
+0714.40.10
+0714.40.20
+0714.40.50
+0714.40.60
+0714.50.10
+0714.50.20
+0714.50.60
+0714.90.42
+0714.90.44
+0714.90.46
+0714.90.48
+0714.90.61
+0801.11.00
+0801.12.00
+0801.19.01
+0801.21.00
+0801.22.00
+0801.31.00
+0801.32.00
+0802.41.00
+0802.42.00
+0802.61.00
+0802.62.00
+0802.70.10
+0802.70.20
+0802.80.10
+0802.80.20
+0802.91.10
+0802.91.90
+0802.92.10
+0802.92.90
+0803.10.10
+0803.10.20
+0803.90.00
+0804.30.20
+0804.30.40
+0804.30.60
+0804.40.00
+0804.50.40
+0804.50.60
+0804.50.80
+0805.10.00
+0805.50.30
+0805.50.40
+0807.20.00
+0808.40.20
+0808.40.40
+0810.50.00
+0810.60.00
+0810.90.27
+0810.90.46
+0811.90.10
+0811.90.25
+0811.90.30
+0811.9<span style="color: var(--text-dim);">... [truncated]</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card added" data-type="added">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_III/2./page:173/(v)/(iii)/page:177/(b)/page:184</span>
+                
+                <span class="diff-badge added">ADDED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content"><em class="empty">Not present in Rev28</em></div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content">As provided in heading 9903.02.78, the additional duties imposed by headings 9903.01.25, 9903.01.35, 9903.01.39 and 9903.02.02–9903.02.73 shall not apply to the following particular articles the product of any country:</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card added" data-type="added">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_III/2./page:173/(v)/(iii)/page:177/(b)/page:184/(1)/page:184</span>
+                
+                <span class="diff-badge added">ADDED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content"><em class="empty">Not present in Rev28</em></div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content">Etrogs (classifiable in subheading 0805.90.01)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card added" data-type="added">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_III/2./page:173/(v)/(iii)/page:177/(b)/page:184/(10)/page:184</span>
+                
+                <span class="diff-badge added">ADDED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content"><em class="empty">Not present in Rev28</em></div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content">Acai preparations for the manufacture of beverages (classifiable in subheading 2106.90.99)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card added" data-type="added">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_III/2./page:173/(v)/(iii)/page:177/(b)/page:184/(11)/page:184</span>
+                
+                <span class="diff-badge added">ADDED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content"><em class="empty">Not present in Rev28</em></div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content">Essential oils other than those of citrus fruit, nesoi, for religious purposes only (classifiable in subheading 3301.29.51)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card added" data-type="added">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_III/2./page:173/(v)/(iii)/page:177/(b)/page:184/(2)/page:184</span>
+                
+                <span class="diff-badge added">ADDED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content"><em class="empty">Not present in Rev28</em></div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content">Tropical fruit, nesoi, frozen, whether or not previously steamed or boiled (classifiable in subheading 0811.90.80)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card added" data-type="added">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_III/2./page:173/(v)/(iii)/page:177/(b)/page:184/(3)/page:184</span>
+                
+                <span class="diff-badge added">ADDED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content"><em class="empty">Not present in Rev28</em></div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content">Date palm branches, Myrtus branches or other vegetable material, for religious purposes only (classifiable in subheading 1404.90.90)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card added" data-type="added">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_III/2./page:173/(v)/(iii)/page:177/(b)/page:184/(4)/page:184</span>
+                
+                <span class="diff-badge added">ADDED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content"><em class="empty">Not present in Rev28</em></div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content">Bread, pastry, cakes, biscuits and similar baked products, nesoi, and puddings, whether or not containing chocolate, fruit, nuts or confectionery, for religious purposes only (classifiable in subheading 1905.90.10)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card added" data-type="added">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_III/2./page:173/(v)/(iii)/page:177/(b)/page:184/(5)/page:184</span>
+                
+                <span class="diff-badge added">ADDED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content"><em class="empty">Not present in Rev28</em></div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content">Bakers’ wares, communion wafers, sealing wafers, rice paper and similar products, nesoi, for religious purposes only (classifiable in subheading 1905.90.90)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card added" data-type="added">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_III/2./page:173/(v)/(iii)/page:177/(b)/page:184/(6)/page:184</span>
+                
+                <span class="diff-badge added">ADDED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content"><em class="empty">Not present in Rev28</em></div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content">Acai (classifiable in subheading 2008.99.21)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card added" data-type="added">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_III/2./page:173/(v)/(iii)/page:177/(b)/page:184/(7)/page:184</span>
+                
+                <span class="diff-badge added">ADDED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content"><em class="empty">Not present in Rev28</em></div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content">Citrus juice of any single citrus fruit (other than orange, grapefruit or lime), of a Brix value not exceeding 20, concentrated, unfermented, except for lemon juice (classifiable in subheading 2009.31.60)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card added" data-type="added">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_III/2./page:173/(v)/(iii)/page:177/(b)/page:184/(8)/page:184</span>
+                
+                <span class="diff-badge added">ADDED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content"><em class="empty">Not present in Rev28</em></div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content">Coconut water or juice of acai (classifiable in subheading 2009.89.70)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card added" data-type="added">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_III/2./page:173/(v)/(iii)/page:177/(b)/page:184/(9)/page:184</span>
+                
+                <span class="diff-badge added">ADDED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content"><em class="empty">Not present in Rev28</em></div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content">Coconut water juice blends, not from concentrate, packaged for retail sale (classifiable in subheading 2009.90.40)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card removed" data-type="removed">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_III/2./page:173/(v)/(iii)/page:178</span>
+                
+                <span class="diff-badge removed">REMOVED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content">As provided in heading 9903.01.32, the additional duties imposed by headings 9903.01.25, 9903.01.35, 9903.01.39, 9903.01.63, and 9903.02.01-9903.02.73 shall not apply to products classified in the following subheadings of the HTSUS:
+[Compiler&#39;s note: List may appear or continue on a subsequent page; blank cells reflect proclaimed
+deletions of subheading numbers.]
+0508.00.00
+2504.10.10
+2504.10.50
+2504.90.00
+2510.10.00
+2510.20.00
+2511.10.10
+2511.10.50
+2519.10.00
+2519.90.10
+2519.90.20
+2524.90.00
+2529.21.00
+2529.22.00
+2530.20.10
+2530.20.20
+2530.90.10
+2530.90.20
+2530.90.80
+2602.00.00
+2603.00.00
+2604.00.00
+2605.00.00
+2606.00.00
+2608.00.00
+2609.00.00
+2610.00.00
+2611.00.30
+2611.00.60
+2612.10.00
+2612.20.00
+2613.90.00
+2614.00.30
+2614.00.60
+2615.90.30
+2615.90.60
+2616.10.00
+2617.10.00
+2620.30.00
+2620.99.50
+2701.11.00
+2701.12.00
+2701.19.00
+2701.20.00
+2702.10.00
+2702.20.00
+2703.00.00
+2704.00.00
+2705.00.00
+2706.00.00
+2707.10.00
+2707.20.00
+2707.30.00
+2707.40.00
+2707.50.00
+2707.91.00
+2707.99.10
+2707.99.20
+2707.99.40
+2707.99.51
+2707.99.55
+2707.99.59
+2707.99.90
+2708.10.00
+2708.20.00
+2709.00.10
+2709.00.20
+2710.12.15
+2710.12.18
+2710.12.25
+2710.12.45
+2710.12.90
+2710.19.06
+2710.19.11
+2710.19.16
+2710.19.24
+2710.19.25
+2710.19.26
+2710.19.30
+2710.19.35
+2710.19.40
+2710.19.45
+2710.19.90
+2710.20.05
+2710.20.10
+2710.20.15
+2710.20.25
+2710.91.00
+2710.99.05
+2710.99.10
+2710.99.16
+2710.99.21
+2710.99.31
+2710.99.32
+2710.99.39
+2710.99.45
+2710.99.90
+2711.11.00
+2711.12.00
+2711.13.00
+2711.14.00
+2711.19.00
+2711.21.00
+2<span style="color: var(--text-dim);">... [truncated]</span></div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content"><em class="empty">Not present in Rev29</em></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card removed" data-type="removed">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_XXI/1./page:758</span>
+                
+                <span class="diff-badge removed">REMOVED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content">The provisions of this subchapter contain modifications of the provisions of the tariff schedule established pursuant to the Trade Agreement between the United States and Japan, entered under the terms of general note 36 to the tariff schedule and described in subheadings 9921.01.01 through 9921.01.02, inclusive, in this subchapter. Unless otherwise expressly indicated herein, such subheadings apply to goods of Japan, under the terms of general note 36 to the tariff schedule for which a rate of duty followed by the symbol “(JP)” is herein provided. Originating goods of Japan described in such subheadings and entered into the customs territory of the United States shall be subject to duty as provided herein in lieu of the duty rates otherwise set forth in the tariff schedule.
+Suf-
+Article Description
+of
+1
+2
+Subheading
+1
+fix
+Quantity
+General
+Special
+Parts of air conditioning machines of heading 8415 (provided [for] in subheading 8415.90.80), including parts of those machines in which the humidity cannot be separately controlled:
+9921.01.01
+Of automotive air conditioners..............................................
+1/
+1/
+1.4% (JP)
+9921.01.02
+1/
+Other........................................................................................
+1/
+Free (JP)
+1/ See chapter 99 statistical note 1.
+SUBCHAPTER XXII
+UNITED STATES-MEXICO-CANADA FREE TRADE AGREEMENT</div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content"><em class="empty">Not present in Rev29</em></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card removed" data-type="removed">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_XXII/1./page:760</span>
+                
+                <span class="diff-badge removed">REMOVED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content">Peanuts and peanut-related goods.-- This note and subheadings 9922.01.01 through 9922.01.12 are effective as to originating goods of USMCA countries eligible for special tariff treatment under the terms of general note 11 to the tariff schedule provided for in subheadings 1202.30.80, 1202.41.80, 1202.42.20, 1202.42.90, 2008.11.15 or 2008.11.61 during the period from July 01, 2020 through the close of December 31, 2024.</div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content"><em class="empty">Not present in Rev29</em></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card removed" data-type="removed">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_XXII/1./page:760/(a)/page:760</span>
+                
+                <span class="diff-badge removed">REMOVED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content">Goods of Mexico that qualify to be marked as a good of Mexico pursuant to U.S. law, without regard to whether the good is marked, and goods of the United States shall be eligible for USMCA tariff treatment only under subheading 9922.01.01, 9922.01.03, 9922.01.05, 9922.01.07, 9922.01.09 or 9922.01.11 during the period specified in this note.</div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content"><em class="empty">Not present in Rev29</em></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card removed" data-type="removed">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_XXII/1./page:760/(b)/page:760</span>
+                
+                <span class="diff-badge removed">REMOVED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content">Goods of Canada that qualify to be marked as a good of Canada pursuant to U.S. law, without regard to whether the goods is marked, shall be eligible for USMCA tariff treatment only under subheading 9922.01.02, 9922.01.04, 9922.01.06, 9922.01.08, 9922.01.10 or 9922.01.12 during the period specified in this note.</div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content"><em class="empty">Not present in Rev29</em></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card removed" data-type="removed">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_XXII/2./page:760</span>
+                
+                <span class="diff-badge removed">REMOVED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content">Cotton and cotton-related goods.--This note and subheadings 9922.52.01 through 9922.52.12 are effective as to originating goods of the parties to the U.S.-Mexico-Canada Agreement classified in the permanent subheadings 5201.00.18, 5201.00.28, 5201.00.38, 5201.00.80, 5202.99.30 or 5203.00.30 entered under the terms of general note 11 to this tariff schedule on or after July 01, 2020 through the close of December 31, 2024.</div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content"><em class="empty">Not present in Rev29</em></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card removed" data-type="removed">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_XXII/2./page:760/(a)/page:760</span>
+                
+                <span class="diff-badge removed">REMOVED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content">Goods of Mexico that qualify to be marked as a good of Mexico pursuant to U.S. law, without regard to whether the good is marked, and goods of the United States entered under the terms of general note 11 shall be eligible for USMCA tariff treatment only under subheading 9922.52.01, 9922.52.03, 9922.52.05, 9922.52.07, 9922.52.09 or 9922.52.11 during the period specified in this note.</div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content"><em class="empty">Not present in Rev29</em></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card removed" data-type="removed">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_XXII/2./page:760/(b)/page:760</span>
+                
+                <span class="diff-badge removed">REMOVED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content">Goods of Canada entered under the terms of general note 11 and that qualify to be marked as a good of Canada pursuant to U.S. law, without regard to whether the good is marked, shall be eligible for USMCA tariff treatment only under subheading 9922.52.02, 9922.52.04, 9922.52.06, 9922.52.08, 9922.52.10 or 9922.52.12 during the period specified in this note.
+Suf-
+Article Description
+of
+1
+2
+Subheading
+1
+fix
+Quantity
+General
+Special
+Goods entered under the provisions of the US-Mexico-Canada Agreement in general note 11:
+Goods provided for in subheading 1202.30.80:
+9922.01.01
+Goods of Mexico or goods of the United States provided for in note 1(a) to this subchapter..................
+1/
+1/
+Free (S+)
+9922.01.02
+1/
+Goods of Canada provided for in note 1(b) to this subchapter.......................................................................
+1/
+22% (S+)
+Goods provided for in subheading 1202.41.80:
+9922.01.03
+1/
+Goods of Mexico or goods of the United States provided for in note 1(a) to this subchapter..................
+1/
+Free (S+)
+9922.01.04
+1/
+Goods of Canada provided for in note 1(b) to this subchapter.......................................................................
+1/
+27.3% (S+)
+Goods provided for in subheading 1202.42.90:
+9922.01.05
+1/
+Goods of Mexico or goods of the United States provided for in note 1(A) to this subchapter.................
+1/
+Free (S+)
+9922.01.06
+1/
+Goods of Canada provided for in note 1(b) to thissubchapter
+1/
+22% (S+)
+Goods provided for in subheading<span style="color: var(--text-dim);">... [truncated]</span></div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content"><em class="empty">Not present in Rev29</em></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card modified" data-type="modified">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path">SUBCHAPTER_III/2./page:173/(v)/(i)</span>
+                <span class="similarity-badge">98% similar</span>
+                <span class="diff-badge modified">MODIFIED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content">Except as provided in headings 9903.01.26-9903.01.33, in heading 9903.01.34, in headings 9903.96.01 and 9903.96.02, and in headings 9903.02.74–9903.02.77 and in subdivisions (v)(ii) through (v)(xxii) of this note, and other than products for personal use included in accompanied baggage of persons arriving in the United States, headings 9903.01.25, 9903.01.35, 9903.01.39, 9903.01.63, and 9903.02.01-9903.02.73 impose additional ad valorem rates of duty on imports of all products. Notwithstanding U.S. note 1 to this subchapter, all products that are subject to the additional ad valorem rate of duty imposed by these headings shall also be subject to the general rates of duty imposed under subheadings in chapters 1 to 97 of the tariff schedule. Except as provided in subdivisions (v)(ii) through (v)(xxii) of this note, all products that are subject to the additional ad valorem rates of duty imposed by these headings shall also be subject to any additional duty provided for in this subchapter or subchapter IV of chapter 99. Products that are eligible for special tariff treatment under general note 3(c)(i) to the tariff schedule, or that are eligible for temporary duty exemptions or reductions under subchapter II to chapter 99, shall be subject to the additional ad valorem rate of duty imposed by these headings except as provided in 9903.96.01 and 9903.96.02 with respect to the Agreement on Trade and Civil Aircraft.
+The additional duties imposed by these headings shall not apply to g<span style="color: var(--text-dim);">... [truncated]</span></div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content">Except as provided in headings 9903.01.26-9903.01.33, in heading 9903.01.34, in headings 9903.96.01 and 9903.96.02, and in headings 9903.02.74–9903.02.78 and in subdivisions (v)(ii) through (v)(xxii) of this note, and other than products for personal use included in accompanied baggage of persons arriving in the United States, headings 9903.01.25, 9903.01.35, 9903.01.39, 9903.01.63, and 9903.02.01-9903.02.73 impose additional ad valorem rates of duty on imports of all products. Notwithstanding U.S. note 1 to this subchapter, all products that are subject to the additional ad valorem rate of duty imposed by these headings shall also be subject to the general rates of duty imposed under subheadings in chapters 1 to 97 of the tariff schedule. Except as provided in subdivisions (v)(ii) through (v)(xxii) of this note, all products that are subject to the additional ad valorem rates of duty imposed by these headings shall also be subject to any additional duty provided for in this subchapter or subchapter IV of chapter 99. Products that are eligible for special tariff treatment under general note 3(c)(i) to the tariff schedule, or that are eligible for temporary duty exemptions or reductions under subchapter II to chapter 99, shall be subject to the additional ad valorem rate of duty imposed by these headings except as provided in 9903.96.01 and 9903.96.02 with respect to the Agreement on Trade and Civil Aircraft.
+The additional duties imposed by these headings shall not apply to g<span style="color: var(--text-dim);">... [truncated]</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diff-card modified" data-type="modified">
+            <div class="diff-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="diff-path"><span style='color: var(--red); text-decoration: line-through;'>SUBCHAPTER_III/38./page:508/(l)/page:511</span> → SUBCHAPTER_III/38./page:509/(l)/page:512</span>
+                <span class="similarity-badge">98% similar</span>
+                <span class="diff-badge modified">MODIFIED</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="diff-body">
+                <div class="diff-grid">
+                    <div class="diff-panel old">
+                        <div class="panel-header">Rev28 (Previous)</div>
+                        <div class="panel-content">Heading 9903.74.11 applies to all entries of articles classifiable under provisions of the HTSUS enumerated in subdivision (i) of this note that are not parts of medium- and heavy-duty vehicles.
+Suf-
+Article Description
+of
+1
+2
+Subheading
+1
+fix
+Quantity
+General
+Special
+1/
+9903.01.01
+Except for products described in headings 9903.01.02, 9903.01.03, 9903.01.04 and 9903.01.05 articles the product of Mexico, as provided for in U.S. note 2(a) to this subchapter.....................................................................................
+1/
+The duty
+The duty provided in
+No change.
+provided in the applicable subheading + 25%
+the applicable subheading + 25%
+1/
+9903.01.02
+Articles the product of Mexico that are donations, by persons subject to the jurisdiction of the United States, of articles, such as food, clothing, and medicine, intended to be used to relieve human suffering, as provided for in U.S. note 2(b) to this subchapter.....................................................................................
+1/
+The duty
+The duty provided in
+No change.
+provided in the applicable subheading
+the applicable subheading
+9903.01.03
+1/
+Articles the product of Mexico that are informational materials, including but not limited to, publications, films, posters, phonograph records, photographs, microfilms, microfiche, tapes, compact disks, CD ROMs, artworks, and news wire feeds...............................................................................................
+1/
+The duty
+<span style="color: var(--text-dim);">... [truncated]</span></div>
+                    </div>
+                    <div class="diff-panel new">
+                        <div class="panel-header">Rev29 (New)</div>
+                        <div class="panel-content">Heading 9903.74.11 applies to all entries of articles classifiable under provisions of the HTSUS enumerated in subdivision (i) of this note that are not parts of medium- and heavy-duty vehicles.
+Suf-
+Article Description
+of
+1
+2
+Subheading
+1
+fix
+Quantity
+General
+Special
+1/
+9903.01.01
+Except for products described in headings 9903.01.02, 9903.01.03, 9903.01.04 and 9903.01.05 articles the product of Mexico, as provided for in U.S. note 2(a) to this subchapter.....................................................................................
+1/
+The duty
+The duty provided in
+No change.
+provided in the applicable subheading + 25%
+the applicable subheading + 25%
+1/
+9903.01.02
+Articles the product of Mexico that are donations, by persons subject to the jurisdiction of the United States, of articles, such as food, clothing, and medicine, intended to be used to relieve human suffering, as provided for in U.S. note 2(b) to this subchapter.....................................................................................
+1/
+The duty
+The duty provided in
+No change.
+provided in the applicable subheading
+the applicable subheading
+9903.01.03
+1/
+Articles the product of Mexico that are informational materials, including but not limited to, publications, films, posters, phonograph records, photographs, microfilms, microfiche, tapes, compact disks, CD ROMs, artworks, and news wire feeds...............................................................................................
+1/
+The duty
+<span style="color: var(--text-dim);">... [truncated]</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        </div>
+    </div>
+    
+    <button class="print-btn" onclick="window.print()">🖨️ Print Report</button>
+    
+    <script>
+        let currentFilter = 'all';
+        let allExpanded = false;
+        
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === filter);
+            });
+            applyFilters();
+        }
+        
+        function applySearch() {
+            applyFilters();
+        }
+        
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            const cards = document.querySelectorAll('.diff-card');
+            
+            cards.forEach(card => {
+                const type = card.dataset.type;
+                const text = card.textContent.toLowerCase();
+                
+                const matchesFilter = currentFilter === 'all' || type === currentFilter;
+                const matchesSearch = !searchTerm || text.includes(searchTerm);
+                
+                card.style.display = matchesFilter && matchesSearch ? 'block' : 'none';
+            });
+        }
+        
+        function toggleExpandAll() {
+            allExpanded = !allExpanded;
+            document.querySelectorAll('.diff-card').forEach(card => {
+                if (card.style.display !== 'none') {
+                    card.classList.toggle('expanded', allExpanded);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTS Tariff Revision Comparison Tool</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f0f13;
+            --bg-card: #1a1a23;
+            --bg-card-hover: #22222d;
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --accent-added: #22c55e;
+            --accent-removed: #ef4444;
+            --accent-modified: #f59e0b;
+            --accent-info: #3b82f6;
+            --text-primary: #f4f4f5;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border: #27272a;
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            padding: 24px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .logo-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .file-upload-section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .file-label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-btn {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-dark);
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .file-btn:hover {
+            border-color: var(--accent-primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .file-btn.loaded {
+            border-color: var(--accent-added);
+            color: var(--accent-added);
+        }
+
+        .compare-btn {
+            width: 100%;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 16px;
+        }
+
+        .compare-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .compare-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .stats-section {
+            margin-top: 32px;
+        }
+
+        .stat-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .stat-item {
+            background: var(--bg-dark);
+            padding: 16px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stat-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .stat-icon.added { background: rgba(34, 197, 94, 0.2); }
+        .stat-icon.removed { background: rgba(239, 68, 68, 0.2); }
+        .stat-icon.modified { background: rgba(245, 158, 11, 0.2); }
+        .stat-icon.unchanged { background: rgba(113, 113, 122, 0.2); }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 32px;
+            overflow-y: auto;
+        }
+
+        .header {
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-chip {
+            padding: 8px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-chip:hover {
+            background: var(--bg-card-hover);
+        }
+
+        .filter-chip.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: white;
+        }
+
+        .filter-chip .count {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        /* Welcome State */
+        .welcome-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            text-align: center;
+        }
+
+        .welcome-icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+            opacity: 0.5;
+        }
+
+        .welcome-state h2 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .welcome-state p {
+            color: var(--text-secondary);
+            max-width: 400px;
+            line-height: 1.6;
+        }
+
+        /* Results */
+        .results-container {
+            display: none;
+        }
+
+        .results-container.active {
+            display: block;
+        }
+
+        /* Diff Card */
+        .diff-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .diff-card:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .diff-card-header {
+            padding: 16px 20px;
+            background: var(--bg-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .diff-path {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--text-secondary);
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .diff-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .diff-badge.added {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--accent-added);
+        }
+
+        .diff-badge.removed {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-removed);
+        }
+
+        .diff-badge.modified {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-modified);
+        }
+
+        .diff-card-body {
+            display: none;
+            padding: 0;
+        }
+
+        .diff-card.expanded .diff-card-body {
+            display: block;
+        }
+
+        .diff-card-header .chevron {
+            transition: transform 0.2s;
+        }
+
+        .diff-card.expanded .diff-card-header .chevron {
+            transform: rotate(180deg);
+        }
+
+        .diff-content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .diff-panel {
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .diff-panel.old {
+            background: rgba(239, 68, 68, 0.05);
+            border-right: 1px solid var(--border);
+        }
+
+        .diff-panel.new {
+            background: rgba(34, 197, 94, 0.05);
+        }
+
+        .diff-panel-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .diff-panel.old .diff-panel-label {
+            color: var(--accent-removed);
+        }
+
+        .diff-panel.new .diff-panel-label {
+            color: var(--accent-added);
+        }
+
+        .diff-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .diff-text .del {
+            background: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .diff-text .ins {
+            background: rgba(34, 197, 94, 0.3);
+            color: #86efac;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .empty-panel {
+            color: var(--text-muted);
+            font-style: italic;
+            text-align: center;
+            padding: 40px;
+        }
+
+        /* Export Button */
+        .export-btn {
+            padding: 10px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .export-btn:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent-primary);
+        }
+
+        /* Summary Dashboard */
+        .summary-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .summary-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+        }
+
+        .summary-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .summary-card-title {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .summary-card-value {
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .summary-card-value.added { color: var(--accent-added); }
+        .summary-card-value.removed { color: var(--accent-removed); }
+        .summary-card-value.modified { color: var(--accent-modified); }
+        .summary-card-value.total { color: var(--accent-info); }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-dark);
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .progress-segment {
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        .progress-segment.added { background: var(--accent-added); }
+        .progress-segment.removed { background: var(--accent-removed); }
+        .progress-segment.modified { background: var(--accent-modified); }
+        .progress-segment.unchanged { background: var(--text-muted); }
+
+        /* Loading State */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 15, 19, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--border);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: relative;
+                height: auto;
+            }
+
+            .diff-content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .diff-panel.old {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">📋</div>
+                <div>
+                    <div class="logo-text">HTS Compare</div>
+                    <div class="logo-sub">Tariff Revision Tool</div>
+                </div>
+            </div>
+
+            <div class="file-upload-section">
+                <div class="section-title">Upload JSON Files</div>
+                
+                <div class="file-input-wrapper">
+                    <label class="file-label">Previous Revision (Base)</label>
+                    <input type="file" id="file1" class="file-input" accept=".json">
+                    <button class="file-btn" id="file1Btn" onclick="document.getElementById('file1').click()">
+                        📄 Select Rev28 JSON...
+                    </button>
+                </div>
+
+                <div class="file-input-wrapper">
+                    <label class="file-label">New Revision (Compare)</label>
+                    <input type="file" id="file2" class="file-input" accept=".json">
+                    <button class="file-btn" id="file2Btn" onclick="document.getElementById('file2').click()">
+                        📄 Select Rev29 JSON...
+                    </button>
+                </div>
+
+                <button class="compare-btn" id="compareBtn" disabled onclick="runComparison()">
+                    🔍 Compare Revisions
+                </button>
+            </div>
+
+            <div class="stats-section" id="statsSection" style="display: none;">
+                <div class="section-title">Change Summary</div>
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <div class="stat-icon added">➕</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="statAdded">0</div>
+                            <div class="stat-label">Added</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon removed">➖</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="statRemoved">0</div>
+                            <div class="stat-label">Removed</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon modified">✏️</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="statModified">0</div>
+                            <div class="stat-label">Modified</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon unchanged">📋</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="statUnchanged">0</div>
+                            <div class="stat-label">Unchanged</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header">
+                <h1>HTS Tariff Comparison</h1>
+                <p>Compare two revisions of Chapter 99 tariff data and identify all changes</p>
+            </div>
+
+            <!-- Welcome State -->
+            <div class="welcome-state" id="welcomeState">
+                <div class="welcome-icon">📊</div>
+                <h2>Ready to Compare</h2>
+                <p>Upload two JSON files from the sidebar to compare HTS tariff revisions. The tool will identify all additions, deletions, and modifications.</p>
+            </div>
+
+            <!-- Results -->
+            <div class="results-container" id="resultsContainer">
+                <!-- Summary Dashboard -->
+                <div class="summary-dashboard" id="summaryDashboard">
+                    <div class="summary-card">
+                        <div class="summary-card-header">
+                            <span class="summary-card-title">Total Changes</span>
+                            <span>📊</span>
+                        </div>
+                        <div class="summary-card-value total" id="totalChanges">0</div>
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-card-header">
+                            <span class="summary-card-title">Items in Rev28</span>
+                            <span>📋</span>
+                        </div>
+                        <div class="summary-card-value" id="rev28Count">0</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-card-header">
+                            <span class="summary-card-title">Items in Rev29</span>
+                            <span>📋</span>
+                        </div>
+                        <div class="summary-card-value" id="rev29Count">0</div>
+                    </div>
+                </div>
+
+                <!-- Filter Bar -->
+                <div class="filter-bar">
+                    <div class="filter-chip active" data-filter="all" onclick="setFilter('all')">
+                        All Changes <span class="count" id="filterAll">0</span>
+                    </div>
+                    <div class="filter-chip" data-filter="added" onclick="setFilter('added')">
+                        ➕ Added <span class="count" id="filterAdded">0</span>
+                    </div>
+                    <div class="filter-chip" data-filter="removed" onclick="setFilter('removed')">
+                        ➖ Removed <span class="count" id="filterRemoved">0</span>
+                    </div>
+                    <div class="filter-chip" data-filter="modified" onclick="setFilter('modified')">
+                        ✏️ Modified <span class="count" id="filterModified">0</span>
+                    </div>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search by path or content..." oninput="applyFilters()">
+                    <button class="export-btn" onclick="exportReport()">
+                        📥 Export Report
+                    </button>
+                </div>
+
+                <!-- Diff List -->
+                <div id="diffList"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // State
+        let file1Data = null;
+        let file2Data = null;
+        let comparisonResults = [];
+        let currentFilter = 'all';
+
+        // File Upload Handlers
+        document.getElementById('file1').addEventListener('change', (e) => handleFileUpload(e, 1));
+        document.getElementById('file2').addEventListener('change', (e) => handleFileUpload(e, 2));
+
+        function handleFileUpload(event, fileNum) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (fileNum === 1) {
+                        file1Data = data;
+                        document.getElementById('file1Btn').textContent = `✓ ${file.name}`;
+                        document.getElementById('file1Btn').classList.add('loaded');
+                    } else {
+                        file2Data = data;
+                        document.getElementById('file2Btn').textContent = `✓ ${file.name}`;
+                        document.getElementById('file2Btn').classList.add('loaded');
+                    }
+                    updateCompareButton();
+                } catch (err) {
+                    alert('Error parsing JSON file: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function updateCompareButton() {
+            document.getElementById('compareBtn').disabled = !(file1Data && file2Data);
+        }
+
+        // Extract all items from JSON
+        function extractItems(data, path = '', items = []) {
+            if (Array.isArray(data)) {
+                data.forEach(item => extractItems(item, path, items));
+            } else if (typeof data === 'object' && data !== null) {
+                const subchapter = data.SUBCHAPTER || '';
+                const heading = data.heading || '';
+                const headingText = data['heading text'] || '';
+
+                let currentPath = path;
+                if (subchapter) currentPath = `SUBCHAPTER_${subchapter}`;
+                if (heading) currentPath = currentPath ? `${currentPath}/${heading}` : heading;
+
+                if (headingText) {
+                    items.push({
+                        path: currentPath,
+                        heading: heading,
+                        text: headingText,
+                        hash: hashString(headingText)
+                    });
+                }
+
+                if (data.data) {
+                    extractItems(data.data, currentPath, items);
+                }
+            }
+            return items;
+        }
+
+        // Simple hash function
+        function hashString(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return hash.toString(16);
+        }
+
+        // Compare two datasets
+        function compareData(oldData, newData) {
+            const oldItems = extractItems(oldData);
+            const newItems = extractItems(newData);
+
+            const oldByPath = new Map(oldItems.map(i => [i.path, i]));
+            const newByPath = new Map(newItems.map(i => [i.path, i]));
+
+            const results = [];
+
+            // Find added and modified
+            for (const [path, newItem] of newByPath) {
+                const oldItem = oldByPath.get(path);
+                if (!oldItem) {
+                    results.push({
+                        type: 'added',
+                        path: path,
+                        oldText: null,
+                        newText: newItem.text
+                    });
+                } else if (oldItem.hash !== newItem.hash) {
+                    results.push({
+                        type: 'modified',
+                        path: path,
+                        oldText: oldItem.text,
+                        newText: newItem.text
+                    });
+                }
+            }
+
+            // Find removed
+            for (const [path, oldItem] of oldByPath) {
+                if (!newByPath.has(path)) {
+                    results.push({
+                        type: 'removed',
+                        path: path,
+                        oldText: oldItem.text,
+                        newText: null
+                    });
+                }
+            }
+
+            // Sort by type then path
+            const typeOrder = { added: 0, removed: 1, modified: 2 };
+            results.sort((a, b) => {
+                if (typeOrder[a.type] !== typeOrder[b.type]) {
+                    return typeOrder[a.type] - typeOrder[b.type];
+                }
+                return a.path.localeCompare(b.path);
+            });
+
+            return {
+                results,
+                stats: {
+                    added: results.filter(r => r.type === 'added').length,
+                    removed: results.filter(r => r.type === 'removed').length,
+                    modified: results.filter(r => r.type === 'modified').length,
+                    unchanged: newByPath.size - results.filter(r => r.type === 'added' || r.type === 'modified').length,
+                    oldTotal: oldByPath.size,
+                    newTotal: newByPath.size
+                }
+            };
+        }
+
+        // Run comparison
+        function runComparison() {
+            document.getElementById('loadingOverlay').classList.add('active');
+
+            setTimeout(() => {
+                try {
+                    const { results, stats } = compareData(file1Data, file2Data);
+                    comparisonResults = results;
+
+                    // Update stats
+                    document.getElementById('statAdded').textContent = stats.added;
+                    document.getElementById('statRemoved').textContent = stats.removed;
+                    document.getElementById('statModified').textContent = stats.modified;
+                    document.getElementById('statUnchanged').textContent = stats.unchanged;
+
+                    document.getElementById('filterAll').textContent = results.length;
+                    document.getElementById('filterAdded').textContent = stats.added;
+                    document.getElementById('filterRemoved').textContent = stats.removed;
+                    document.getElementById('filterModified').textContent = stats.modified;
+
+                    document.getElementById('totalChanges').textContent = results.length;
+                    document.getElementById('rev28Count').textContent = stats.oldTotal;
+                    document.getElementById('rev29Count').textContent = stats.newTotal;
+
+                    // Progress bar
+                    const total = stats.added + stats.removed + stats.modified + stats.unchanged;
+                    const progressBar = document.getElementById('progressBar');
+                    progressBar.innerHTML = `
+                        <div class="progress-segment added" style="width: ${(stats.added / total) * 100}%"></div>
+                        <div class="progress-segment removed" style="width: ${(stats.removed / total) * 100}%"></div>
+                        <div class="progress-segment modified" style="width: ${(stats.modified / total) * 100}%"></div>
+                        <div class="progress-segment unchanged" style="width: ${(stats.unchanged / total) * 100}%"></div>
+                    `;
+
+                    // Show results
+                    document.getElementById('welcomeState').style.display = 'none';
+                    document.getElementById('resultsContainer').classList.add('active');
+                    document.getElementById('statsSection').style.display = 'block';
+
+                    renderDiffList();
+                } catch (err) {
+                    alert('Error comparing files: ' + err.message);
+                    console.error(err);
+                }
+
+                document.getElementById('loadingOverlay').classList.remove('active');
+            }, 100);
+        }
+
+        // Render diff list
+        function renderDiffList() {
+            const container = document.getElementById('diffList');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+            let filtered = comparisonResults;
+
+            // Apply type filter
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(r => r.type === currentFilter);
+            }
+
+            // Apply search filter
+            if (searchTerm) {
+                filtered = filtered.filter(r =>
+                    r.path.toLowerCase().includes(searchTerm) ||
+                    (r.oldText && r.oldText.toLowerCase().includes(searchTerm)) ||
+                    (r.newText && r.newText.toLowerCase().includes(searchTerm))
+                );
+            }
+
+            // Limit display for performance
+            const displayLimit = 100;
+            const toDisplay = filtered.slice(0, displayLimit);
+
+            container.innerHTML = toDisplay.map((item, idx) => `
+                <div class="diff-card" id="card-${idx}" onclick="toggleCard(${idx})">
+                    <div class="diff-card-header">
+                        <span class="diff-path">${escapeHtml(item.path)}</span>
+                        <span class="diff-badge ${item.type}">${item.type}</span>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="diff-card-body">
+                        <div class="diff-content-grid">
+                            <div class="diff-panel old">
+                                <div class="diff-panel-label">Revision 28 (Previous)</div>
+                                ${item.oldText
+                                    ? `<div class="diff-text">${escapeHtml(truncateText(item.oldText, 2000))}</div>`
+                                    : '<div class="empty-panel">Not present in this revision</div>'
+                                }
+                            </div>
+                            <div class="diff-panel new">
+                                <div class="diff-panel-label">Revision 29 (New)</div>
+                                ${item.newText
+                                    ? `<div class="diff-text">${escapeHtml(truncateText(item.newText, 2000))}</div>`
+                                    : '<div class="empty-panel">Not present in this revision</div>'
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            if (filtered.length > displayLimit) {
+                container.innerHTML += `
+                    <div style="text-align: center; padding: 20px; color: var(--text-muted);">
+                        Showing ${displayLimit} of ${filtered.length} results. Use search to narrow down.
+                    </div>
+                `;
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                        No changes match your filter criteria.
+                    </div>
+                `;
+            }
+        }
+
+        function toggleCard(idx) {
+            const card = document.getElementById(`card-${idx}`);
+            card.classList.toggle('expanded');
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.classList.toggle('active', chip.dataset.filter === filter);
+            });
+            renderDiffList();
+        }
+
+        function applyFilters() {
+            renderDiffList();
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function truncateText(text, maxLength) {
+            if (text.length <= maxLength) return text;
+            return text.substring(0, maxLength) + '... [truncated]';
+        }
+
+        // Export report
+        function exportReport() {
+            const report = {
+                generatedAt: new Date().toISOString(),
+                summary: {
+                    added: comparisonResults.filter(r => r.type === 'added').length,
+                    removed: comparisonResults.filter(r => r.type === 'removed').length,
+                    modified: comparisonResults.filter(r => r.type === 'modified').length
+                },
+                changes: comparisonResults.map(r => ({
+                    type: r.type,
+                    path: r.path,
+                    oldText: r.oldText ? r.oldText.substring(0, 500) + (r.oldText.length > 500 ? '...' : '') : null,
+                    newText: r.newText ? r.newText.substring(0, 500) + (r.newText.length > 500 ? '...' : '') : null
+                }))
+            };
+
+            const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `hts-comparison-report-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
+

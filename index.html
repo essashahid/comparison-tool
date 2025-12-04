@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTS Chapter 99: Visualization Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 80px 20px 60px;
+            color: white;
+        }
+        
+        .hero h1 {
+            font-size: 4.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            animation: fadeInDown 0.8s ease;
+        }
+        
+        .hero .subtitle {
+            font-size: 1.5em;
+            opacity: 0.95;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+        
+        .hero .description {
+            font-size: 1.1em;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+        
+        .stats-banner {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 40px auto;
+            max-width: 1000px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            animation: fadeInUp 0.8s ease 0.6s both;
+        }
+        
+        .stat-item {
+            text-align: center;
+            color: white;
+        }
+        
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .visualizations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .viz-card {
+            background: white;
+            border-radius: 20px;
+            padding: 0;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            animation: fadeInUp 0.8s ease both;
+        }
+        
+        .viz-card:nth-child(1) { animation-delay: 0.1s; }
+        .viz-card:nth-child(2) { animation-delay: 0.2s; }
+        .viz-card:nth-child(3) { animation-delay: 0.3s; }
+        .viz-card:nth-child(4) { animation-delay: 0.4s; }
+        .viz-card:nth-child(5) { animation-delay: 0.5s; }
+        
+        .viz-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .card-header {
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        .card-icon {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .card-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .card-subtitle {
+            font-size: 1em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+        
+        .card-description {
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+        
+        .card-features {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .card-features li {
+            padding: 8px 0;
+            color: #555;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .card-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .card-footer {
+            padding: 20px 25px;
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-badge {
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        
+        .badge-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .badge-success {
+            background: #06ffa5;
+            color: #333;
+        }
+        
+        .badge-warning {
+            background: #fee140;
+            color: #333;
+        }
+        
+        .badge-info {
+            background: #4facfe;
+            color: white;
+        }
+        
+        .badge-purple {
+            background: #9d4edd;
+            color: white;
+        }
+        
+        .arrow-link {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 60px 20px 40px;
+            color: white;
+            opacity: 0.9;
+        }
+        
+        .footer p {
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5em;
+            }
+            
+            .hero .subtitle {
+                font-size: 1.2em;
+            }
+            
+            .visualizations-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>📊 HTS Chapter 99</h1>
+            <p class="subtitle">Revision Comparison Report</p>
+            <p class="description">
+                Compare Revision 28 and Revision 29 of the United States 
+                Harmonized Tariff Schedule Chapter 99. View all changes, additions, 
+                and modifications in a comprehensive, easy-to-navigate report.
+            </p>
+        </div>
+        
+        <div class="stats-banner">
+            <div class="stat-item">
+                <div class="stat-value">4,472</div>
+                <div class="stat-label">Rev28 Items</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">4,477</div>
+                <div class="stat-label">Rev29 Items</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">13</div>
+                <div class="stat-label">Added</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">8</div>
+                <div class="stat-label">Removed</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">2</div>
+                <div class="stat-label">Modified</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">23</div>
+                <div class="stat-label">Total Changes</div>
+            </div>
+        </div>
+        
+        <div class="visualizations-grid" style="max-width: 600px;">
+            <a href="hts_meeting_report.html" class="viz-card">
+                <div class="card-header">
+                    <span class="card-icon">📝</span>
+                    <div class="card-title">Change Summary Report</div>
+                    <div class="card-subtitle">Rev28 → Rev29 Comparison</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-description">
+                        A comprehensive report highlighting all provisions that changed between 
+                        Revision 28 and Revision 29. View added, removed, and modified items 
+                        with side-by-side text comparison.
+                    </p>
+                    <ul class="card-features">
+                        <li>Summary statistics dashboard</li>
+                        <li>Expandable cards with old vs new text</li>
+                        <li>Filter by change type (Added/Removed/Modified)</li>
+                        <li>Search by path or content</li>
+                        <li>Print-friendly layout</li>
+                        <li>Export functionality</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <span class="card-badge badge-success">View Report</span>
+                    <span class="arrow-link">Open →</span>
+                </div>
+            </a>
+        </div>
+        
+        <div class="footer">
+            <p><strong>HTS Chapter 99: Revision 28 → Revision 29</strong></p>
+            <p>United States Harmonized Tariff Schedule - 2025 Editions</p>
+            <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.8;">
+                Created with comprehensive analysis and creative visualization tools
+            </p>
+        </div>
+    </div>
+</body>
+</html>
+
