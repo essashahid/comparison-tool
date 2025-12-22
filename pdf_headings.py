@@ -323,7 +323,7 @@ class PDF_Headings:
                 if data["level"] == 0 and self.is_roman_numeral(data["text"]):
                     t = copy.deepcopy(template_subchapter)
                     t["SUBCHAPTER"] = data["text"]
-                    subchapter = f"{data["text"]}".strip()
+                    subchapter = data["text"].strip()
                     return_data.append(t)
                     last_level_added = 0
 
