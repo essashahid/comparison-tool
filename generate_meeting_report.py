@@ -219,8 +219,8 @@ def generate_report_html(results, old_count, new_count):
             <div class="diff-body">
                 <div class="diff-grid">
                     <div class="diff-panel old">
-                        <div class="panel-header">Rev28 (Previous)</div>
-                        <div class="panel-content">{old_text if old_text else '<em class="empty">Not present in Rev28</em>'}</div>
+                        <div class="panel-header">Rev26 (Previous)</div>
+                        <div class="panel-content">{old_text if old_text else '<em class="empty">Not present in Rev26</em>'}</div>
                     </div>
                     <div class="diff-panel new">
                         <div class="panel-header">Rev29 (New)</div>
@@ -605,7 +605,7 @@ def generate_report_html(results, old_count, new_count):
 <body>
     <div class="hero">
         <h1>📊 HTS Chapter 99 Comparison</h1>
-        <p class="subtitle">Revision 28 → Revision 29</p>
+        <p class="subtitle">Revision 26 → Revision 29</p>
         <p class="date">Generated: {datetime.now().strftime('%B %d, %Y at %I:%M %p')}</p>
     </div>
     
@@ -628,7 +628,7 @@ def generate_report_html(results, old_count, new_count):
         </div>
         <div class="stat-card">
             <div class="stat-value">{stats['old_count']}</div>
-            <div class="stat-label">Items in Rev28</div>
+            <div class="stat-label">Items in Rev26</div>
         </div>
         <div class="stat-card">
             <div class="stat-value">{stats['new_count']}</div>
@@ -639,7 +639,7 @@ def generate_report_html(results, old_count, new_count):
     <div class="container">
         <div class="key-insight">
             <h3>📌 Key Insight</h3>
-            <p>This report compares HTS Chapter 99 between Rev28 and Rev29. 
+            <p>This report compares HTS Chapter 99 between Rev26 and Rev29. 
             Found <strong>{stats['added']} new provisions</strong>, <strong>{stats['removed']} removed provisions</strong>, 
             and <strong>{stats['modified']} modifications</strong> to existing text.
             Click on any item below to expand and see the full details.</p>
@@ -718,14 +718,14 @@ def generate_report_html(results, old_count, new_count):
 
 def main():
     print("🔄 Loading JSON files...")
-    rev28 = load_json('Chapter 99_2025HTSRev28.json')
+    rev26 = load_json('Chapter 99_2025HTSRev26.json')
     rev29 = load_json('Chapter 99_2025HTSRev29.json')
     
     print("📊 Extracting items...")
-    old_items = extract_items(rev28)
+    old_items = extract_items(rev26)
     new_items = extract_items(rev29)
     
-    print(f"   Rev28: {len(old_items)} items")
+    print(f"   Rev26: {len(old_items)} items")
     print(f"   Rev29: {len(new_items)} items")
     
     print("🔍 Comparing revisions (using normalized paths to ignore page number shifts)...")
