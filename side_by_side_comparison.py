@@ -593,7 +593,7 @@ def generate_side_by_side_html(comparison_pairs):
 <body>
     <div class="header">
         <h1>📊 Side-by-Side Comparison</h1>
-        <p class="subtitle">HTS Chapter 99: Revision 28 vs Revision 29</p>
+        <p class="subtitle">HTS Chapter 99: Revision 4 vs Revision 5 (2026)</p>
         <div class="stats-bar">
             <div class="stat-item">
                 <div class="stat-value">{stats['total_pairs']:,}</div>
@@ -609,11 +609,11 @@ def generate_side_by_side_html(comparison_pairs):
             </div>
             <div class="stat-item">
                 <div class="stat-value">{stats['only_rev28']:,}</div>
-                <div class="stat-label">Only Rev28</div>
+                <div class="stat-label">Only Rev4</div>
             </div>
             <div class="stat-item">
                 <div class="stat-value">{stats['only_rev29']:,}</div>
-                <div class="stat-label">Only Rev29</div>
+                <div class="stat-label">Only Rev5</div>
             </div>
             <div class="stat-item">
                 <div class="stat-value">{stats['moved']:,}</div>
@@ -634,8 +634,8 @@ def generate_side_by_side_html(comparison_pairs):
                 <button class="filter-btn" onclick="filterItems('matched')">Matched</button>
                 <button class="filter-btn" onclick="filterItems('modified')">Modified</button>
                 <button class="filter-btn" onclick="filterItems('content_changed')">Content Changed</button>
-                <button class="filter-btn" onclick="filterItems('only_rev28')">Only Rev28</button>
-                <button class="filter-btn" onclick="filterItems('only_rev29')">Only Rev29</button>
+                <button class="filter-btn" onclick="filterItems('only_rev28')">Only Rev4</button>
+                <button class="filter-btn" onclick="filterItems('only_rev29')">Only Rev5</button>
                 <button class="filter-btn" onclick="filterItems('moved')">Moved</button>
             </div>
             <button class="differences-only-toggle" id="diffToggle" onclick="toggleDifferencesOnly()">
@@ -821,20 +821,20 @@ def generate_comparison_items(comparison_pairs):
                 </div>
                 <div class="moved-paths">
                     <div class="moved-path rev28">
-                        <strong>Rev28:</strong><br>{rev28_item['path']}
+                        <strong>Rev4:</strong><br>{rev28_item['path']}
                     </div>
                     <div class="arrow">→</div>
                     <div class="moved-path rev29">
-                        <strong>Rev29:</strong><br>{rev29_item['path']}
+                        <strong>Rev5:</strong><br>{rev29_item['path']}
                     </div>
                 </div>
                 <div class="side-by-side-content">
                     <div class="side-panel rev28">
-                        <div class="panel-label rev28">Revision 28</div>
+                        <div class="panel-label rev28">Revision 4 (2026)</div>
                         <div class="panel-content">{rev28_item['text'][:2000]}{'...' if len(rev28_item['text']) > 2000 else ''}</div>
                     </div>
                     <div class="side-panel rev29">
-                        <div class="panel-label rev29">Revision 29</div>
+                        <div class="panel-label rev29">Revision 5 (2026)</div>
                         <div class="panel-content">{rev29_item['text'][:2000]}{'...' if len(rev29_item['text']) > 2000 else ''}</div>
                     </div>
                 </div>
@@ -873,10 +873,10 @@ def generate_comparison_items(comparison_pairs):
                 {f'<div class="similarity-indicator">Similarity: {similarity:.1%}<div class="similarity-bar"><div class="similarity-fill" style="width: {similarity * 100}%"></div></div></div>' if item_type in ['modified', 'content_changed'] else ''}
                 <div class="side-by-side-content">
                     <div class="side-panel rev28 {'empty' if not rev28_item else ''}">
-                        {f'<div class="panel-label rev28">Revision 28</div><div class="panel-content">{rev28_highlighted}</div>' if rev28_item else '<div>Not in Revision 28</div>'}
+                        {f'<div class="panel-label rev28">Revision 4 (2026)</div><div class="panel-content">{rev28_highlighted}</div>' if rev28_item else '<div>Not in Revision 28</div>'}
                     </div>
                     <div class="side-panel rev29 {'empty' if not rev29_item else ''}">
-                        {f'<div class="panel-label rev29">Revision 29</div><div class="panel-content">{rev29_highlighted}</div>' if rev29_item else '<div>Not in Revision 29</div>'}
+                        {f'<div class="panel-label rev29">Revision 5 (2026)</div><div class="panel-content">{rev29_highlighted}</div>' if rev29_item else '<div>Not in Revision 29</div>'}
                     </div>
                 </div>
             </div>
@@ -886,30 +886,30 @@ def generate_comparison_items(comparison_pairs):
 
 def main():
     print("🔍 Loading JSON files...")
-    rev28 = load_json('Chapter 99_2025HTSRev28.json')
-    rev29 = load_json('Chapter 99_2025HTSRev29.json')
-    
+    rev28 = load_json('Chapter 99_2026HTSRev4.json')
+    rev29 = load_json('Chapter 99_2026HTSRev5.json')
+
     print("📊 Extracting items...")
     rev28_items = extract_all_items(rev28)
     rev29_items = extract_all_items(rev29)
-    
+
     print("🔬 Building side-by-side comparison...")
     comparison_pairs = build_side_by_side_comparison(rev28_items, rev29_items)
-    
+
     print("🎨 Generating side-by-side HTML...")
     html = generate_side_by_side_html(comparison_pairs)
-    
+
     output_file = 'hts_side_by_side.html'
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write(html)
-    
+
     print(f"✅ Side-by-side comparison created: {output_file}")
     print(f"\n📊 Summary:")
     print(f"   Total comparison pairs: {len(comparison_pairs):,}")
     print(f"   Matched: {sum(1 for p in comparison_pairs if p['type'] == 'matched'):,}")
     print(f"   Modified: {sum(1 for p in comparison_pairs if p['type'] == 'modified'):,}")
-    print(f"   Only in Rev28: {sum(1 for p in comparison_pairs if p['type'] == 'only_rev28'):,}")
-    print(f"   Only in Rev29: {sum(1 for p in comparison_pairs if p['type'] == 'only_rev29'):,}")
+    print(f"   Only in Rev4: {sum(1 for p in comparison_pairs if p['type'] == 'only_rev28'):,}")
+    print(f"   Only in Rev5: {sum(1 for p in comparison_pairs if p['type'] == 'only_rev29'):,}")
     print(f"   Moved: {sum(1 for p in comparison_pairs if p['type'] == 'moved'):,}")
 
 if __name__ == '__main__':
