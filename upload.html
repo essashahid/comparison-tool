@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HTS Chapter 99 — PDF Upload</title>
+  <title>HTS Chapter 99 — Saved revisions</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -540,18 +540,15 @@
 </head>
 <body>
   <div class="hero">
-    <h1>HTS Chapter 99 — PDF upload</h1>
-    <p class="subtitle">Convert a Chapter 99 PDF into structured JSON — fully in your browser</p>
+    <h1>HTS Chapter 99 — Saved revisions</h1>
+    <p class="subtitle">Upload PDFs, diff the two newest saves, export JSON, track sync tasks</p>
     <a href="index.html" class="back-link">← Back to hub</a>
   </div>
 
   <div class="container">
     <div class="section">
       <h2 class="section-title">1. Choose a Chapter 99 PDF</h2>
-      <p class="section-sub">
-        PDF only. Maximum file size: 20&nbsp;MB. The file is processed and stored
-        entirely inside this browser — it never leaves your machine.
-      </p>
+      <p class="section-sub">PDF only, max 20&nbsp;MB.</p>
 
       <div class="drop-zone" id="drop">
         <div class="drop-icon">📤</div>
@@ -574,19 +571,12 @@
 
       <div class="message" id="message" role="status" hidden></div>
 
-      <p class="privacy-note">
-        Stored privately in your browser via <code>IndexedDB</code> under this site's origin.
-        Each record is timestamped at the moment it is saved. Clearing site data
-        will remove all uploads.
-      </p>
+      <p class="privacy-note">Data stays in <code>IndexedDB</code> for this site; clearing site data removes it.</p>
     </div>
 
     <div class="section">
       <h2 class="section-title">2. Your uploads</h2>
-      <p class="section-sub">
-        Every accepted PDF is kept here with an ISO 8601 timestamp. You can re-download
-        the original PDF, the converted structured JSON, or remove the record.
-      </p>
+      <p class="section-sub">Re-download PDF or JSON, or delete a record.</p>
 
       <div class="history" id="history">
         <div class="empty" id="historyEmpty">No PDFs uploaded yet.</div>
@@ -596,16 +586,7 @@
     <div class="section">
       <h2 class="section-title">3. Version comparison (latest vs previous)</h2>
       <p class="section-sub">
-        The two most recent uploads (by save time) are compared automatically. HTS
-        entries are matched by <code>normalized_path</code> (heading hierarchy), then
-        classified as <strong>added</strong>, <strong>removed</strong>, or
-        <strong>modified</strong>. Each distinct change creates a <strong>Pending</strong> sync task
-        (deduped per version pair): <em>Create new entry</em> (added),
-        <em>Update existing entry</em> (modified, with before/after text),
-        or removal tasks with optional reason — all included in <em>Download diff JSON</em>.
-        Use the tabs to show one change type, the search
-        field to find an HTS code or path, and the side-by-side <em>Before / After</em>
-        view for modified text (word-level highlights where text differs).
+        Compares the two most recent saves (by time). Sync tasks and full diff payload: <em>Download diff JSON</em>.
       </p>
       <div class="run-row" style="margin-top:0;margin-bottom:12px;justify-content:flex-start;">
         <button class="btn" id="recompareBtn" type="button" disabled>↻ Re-run comparison</button>
@@ -639,11 +620,7 @@
 
     <div class="section" id="taskDashSection">
       <h2 class="section-title">4. Task monitoring</h2>
-      <p class="section-sub">
-        Track execution of sync tasks stored in your browser. Set status to
-        <strong>Pending</strong>, <strong>In Progress</strong>, <strong>Completed</strong>, or
-        <strong>Failed</strong>. Failed tasks can record an error message for visibility.
-      </p>
+      <p class="section-sub">Statuses and error notes persist with each task (created when a comparison above finds changes).</p>
       <div id="taskDashRoot">
         <div class="task-dash-summary" id="taskDashSummary" aria-live="polite"></div>
         <div class="task-dash-toolbar">
@@ -664,7 +641,7 @@
             </select>
           </label>
         </div>
-        <div class="task-dash-empty" id="taskDashEmpty" hidden>No sync tasks yet. Compare two uploads in section 3 to create tasks.</div>
+        <div class="task-dash-empty" id="taskDashEmpty" hidden>No sync tasks yet — run a comparison above first.</div>
         <div class="task-dash-scroll" id="taskDashScroll" hidden>
           <table class="task-dash-table" id="taskDashTable">
             <thead>
@@ -1386,7 +1363,7 @@
         '<span class="cmp-stat modified">Modified: ' + modified + '</span>' +
         '<span class="cmp-stat" style="background:rgba(255,255,255,0.08);color:#a1a1aa;">Total changes: ' +
         results.length + '</span>' +
-        '<span class="cmp-stat" style="background:rgba(99,102,241,0.15);color:#a5b4fc;" title="Pending sync tasks: create, update, remove (deduped per version pair)">Sync tasks: ' +
+        '<span class="cmp-stat" style="background:rgba(99,102,241,0.15);color:#a5b4fc;" title="Tasks recorded for this comparison">Sync tasks: ' +
         taskCount + '</span>';
 
       diffViewFilter = 'all';
@@ -1572,7 +1549,7 @@
         '</div>';
       setMessage(
         'success',
-        '✅ Upload received, validated, and converted to structured JSON.' + detail
+        '✅ Saved.' + detail
       );
 
       clearSelection();

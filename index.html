@@ -96,44 +96,6 @@
       margin-bottom: 18px;
     }
 
-    /* Stats tied to the built-in report */
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    @media (min-width: 540px) {
-      .stats {
-        grid-template-columns: repeat(6, 1fr);
-      }
-    }
-
-    .stat {
-      background: var(--surface2);
-      border-radius: 10px;
-      padding: 12px 8px;
-      text-align: center;
-      border: 1px solid var(--border);
-    }
-
-    .stat-val {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1.2;
-    }
-
-    .stat-lbl {
-      font-size: 0.65rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--muted);
-      margin-top: 4px;
-    }
-
     .btn {
       display: inline-flex;
       align-items: center;
@@ -252,7 +214,7 @@
     <header class="page-header">
       <h1>HTS Chapter 99</h1>
       <p class="tagline">
-        One place for the official Rev&nbsp;4 → Rev&nbsp;5 report and for comparing your own Chapter&nbsp;99 PDFs in the browser. Nothing here uploads to a server.
+        Choose a path below. Everything runs in your browser; nothing is uploaded to a server.
       </p>
     </header>
 
@@ -261,16 +223,8 @@
         <div class="section-label">Reference</div>
         <h2 id="report-heading" class="section-title">Pre-built change report (2026)</h2>
         <p class="section-lead">
-          The numbers below are the summary for this fixed comparison only. Open the report to explore every added, removed, and modified provision.
+          Full statistics and every change live in the report — not duplicated here.
         </p>
-        <div class="stats" role="group" aria-label="Rev 4 versus Rev 5 summary">
-          <div class="stat"><div class="stat-val">4,530</div><div class="stat-lbl">Rev 4 items</div></div>
-          <div class="stat"><div class="stat-val">4,426</div><div class="stat-lbl">Rev 5 items</div></div>
-          <div class="stat"><div class="stat-val">62</div><div class="stat-lbl">Added</div></div>
-          <div class="stat"><div class="stat-val">166</div><div class="stat-lbl">Removed</div></div>
-          <div class="stat"><div class="stat-val">17</div><div class="stat-lbl">Modified</div></div>
-          <div class="stat"><div class="stat-val">245</div><div class="stat-lbl">Total changes</div></div>
-        </div>
         <a class="btn btn-primary" href="hts_meeting_report.html">Open Rev 4 → Rev 5 report</a>
       </section>
 
@@ -278,7 +232,7 @@
         <div class="section-label">Your PDFs</div>
         <h2 id="your-pdfs-heading" class="section-title">Work with your own revisions</h2>
         <p class="section-lead">
-          Use these when you have different PDFs (any revisions). Both tools run locally in your browser.
+          For arbitrary Chapter&nbsp;99 PDFs (any revisions).
         </p>
 
         <div class="flow">
@@ -287,7 +241,7 @@
             <div class="step-body">
               <h3>Upload &amp; store</h3>
               <p>
-                Convert each Chapter&nbsp;99 PDF to structured JSON, keep a timestamped library in IndexedDB, and compare the two most recent uploads—including sync tasks for downstream use.
+                Build a local library of uploads; the two newest are diffed automatically, with optional sync tasks and diff JSON export.
               </p>
               <a class="btn btn-secondary" href="upload.html">Go to upload &amp; version compare</a>
             </div>
@@ -297,7 +251,7 @@
             <div class="step-body">
               <h3>Compare any two PDFs in one go</h3>
               <p>
-                Pick two files in a single session for a full diff and downloadable HTML report—useful when you do not need the stored library from step&nbsp;1.
+                One session, two files, one HTML report — when you do not need a stored library.
               </p>
               <a class="btn btn-ghost" href="compare.html">Open two-PDF comparison</a>
             </div>
@@ -307,7 +261,7 @@
     </main>
 
     <footer class="footnote">
-      <p><strong>HTS Chapter 99</strong> · Rev 4 → Rev 5 · United States Harmonized Tariff Schedule (2026)</p>
+      <p>United States Harmonized Tariff Schedule — Chapter 99 tools</p>
     </footer>
   </div>
 </body>
