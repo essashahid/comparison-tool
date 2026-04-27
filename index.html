@@ -1,432 +1,314 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTS Chapter 99: Visualization Hub</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .hero {
-            text-align: center;
-            padding: 80px 20px 60px;
-            color: white;
-        }
-        
-        .hero h1 {
-            font-size: 4.5em;
-            margin-bottom: 20px;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            animation: fadeInDown 0.8s ease;
-        }
-        
-        .hero .subtitle {
-            font-size: 1.5em;
-            opacity: 0.95;
-            margin-bottom: 30px;
-            animation: fadeInUp 0.8s ease 0.2s both;
-        }
-        
-        .hero .description {
-            font-size: 1.1em;
-            opacity: 0.9;
-            max-width: 800px;
-            margin: 0 auto;
-            line-height: 1.8;
-            animation: fadeInUp 0.8s ease 0.4s both;
-        }
-        
-        .stats-banner {
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            margin: 40px auto;
-            max-width: 1000px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-            animation: fadeInUp 0.8s ease 0.6s both;
-        }
-        
-        .stat-item {
-            text-align: center;
-            color: white;
-        }
-        
-        .stat-value {
-            font-size: 2.5em;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            font-size: 0.9em;
-            opacity: 0.9;
-        }
-        
-        .visualizations-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-            gap: 40px;
-            margin-top: 60px;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .viz-card {
-            background: white;
-            border-radius: 20px;
-            padding: 0;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-            overflow: hidden;
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-            animation: fadeInUp 0.8s ease both;
-        }
-        
-        .viz-card:nth-child(1) { animation-delay: 0.1s; }
-        .viz-card:nth-child(2) { animation-delay: 0.2s; }
-        .viz-card:nth-child(3) { animation-delay: 0.3s; }
-        .viz-card:nth-child(4) { animation-delay: 0.4s; }
-        .viz-card:nth-child(5) { animation-delay: 0.5s; }
-        
-        .viz-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        
-        .card-header {
-            padding: 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .card-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: rotate 20s linear infinite;
-        }
-        
-        .card-icon {
-            font-size: 3.5em;
-            margin-bottom: 15px;
-            display: block;
-        }
-        
-        .card-title {
-            font-size: 1.8em;
-            font-weight: bold;
-            margin-bottom: 10px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .card-subtitle {
-            font-size: 1em;
-            opacity: 0.9;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .card-body {
-            padding: 25px;
-        }
-        
-        .card-description {
-            color: #666;
-            line-height: 1.7;
-            margin-bottom: 20px;
-        }
-        
-        .card-features {
-            list-style: none;
-            padding: 0;
-        }
-        
-        .card-features li {
-            padding: 8px 0;
-            color: #555;
-            position: relative;
-            padding-left: 25px;
-        }
-        
-        .card-features li::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: #667eea;
-            font-weight: bold;
-        }
-        
-        .card-footer {
-            padding: 20px 25px;
-            background: #f8f9fa;
-            border-top: 1px solid #e0e0e0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .card-badge {
-            padding: 5px 12px;
-            border-radius: 12px;
-            font-size: 0.85em;
-            font-weight: bold;
-        }
-        
-        .badge-primary {
-            background: #667eea;
-            color: white;
-        }
-        
-        .badge-success {
-            background: #06ffa5;
-            color: #333;
-        }
-        
-        .badge-warning {
-            background: #fee140;
-            color: #333;
-        }
-        
-        .badge-info {
-            background: #4facfe;
-            color: white;
-        }
-        
-        .badge-purple {
-            background: #9d4edd;
-            color: white;
-        }
-        
-        .arrow-link {
-            color: #667eea;
-            font-weight: bold;
-            font-size: 0.9em;
-        }
-        
-        .card-body code {
-            background: rgba(0,0,0,0.2);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
-        
-        .footer {
-            text-align: center;
-            padding: 60px 20px 40px;
-            color: white;
-            opacity: 0.9;
-        }
-        
-        .footer p {
-            margin: 10px 0;
-            font-size: 1.1em;
-        }
-        
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes rotate {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5em;
-            }
-            
-            .hero .subtitle {
-                font-size: 1.2em;
-            }
-            
-            .visualizations-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTS Chapter 99 — Tools &amp; Reports</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg0: #1e1b4b;
+      --bg1: #312e81;
+      --surface: #ffffff;
+      --surface2: #f8fafc;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #4f46e5;
+      --accent-hover: #4338ca;
+      --green: #059669;
+      --green-bg: #ecfdf5;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(165deg, var(--bg0) 0%, var(--bg1) 45%, #4c1d95 100%);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 40px 20px 56px;
+    }
+
+    .page-header {
+      text-align: center;
+      color: #fff;
+      margin-bottom: 28px;
+    }
+
+    .page-header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .page-header .tagline {
+      font-size: 0.95rem;
+      opacity: 0.88;
+      max-width: 36em;
+      margin: 0 auto;
+    }
+
+    /* Single connected column */
+    .hub {
+      background: var(--surface);
+      border-radius: 16px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .hub-section {
+      padding: 24px 24px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hub-section:last-child {
+      border-bottom: none;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .section-lead {
+      font-size: 0.875rem;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    /* Stats tied to the built-in report */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    @media (min-width: 540px) {
+      .stats {
+        grid-template-columns: repeat(6, 1fr);
+      }
+    }
+
+    .stat {
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 12px 8px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .stat-val {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .stat-lbl {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.15s;
+    }
+
+    .btn:active { transform: scale(0.98); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      width: 100%;
+    }
+
+    .btn-primary:hover { background: var(--accent-hover); }
+
+    .btn-secondary {
+      background: var(--green-bg);
+      color: var(--green);
+      border: 1px solid rgba(5, 150, 105, 0.25);
+      width: 100%;
+    }
+
+    .btn-secondary:hover {
+      background: #d1fae5;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--border);
+      width: 100%;
+    }
+
+    .btn-ghost:hover {
+      background: var(--surface2);
+    }
+
+    /* Workflow steps */
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .flow-step {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 14px 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+    }
+
+    .flow-step:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .flow-step:first-child {
+      padding-top: 0;
+    }
+
+    .step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .step-body h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .step-body p {
+      font-size: 0.8125rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .footnote {
+      text-align: center;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.65);
+      margin-top: 24px;
+      line-height: 1.6;
+    }
+
+    .footnote strong {
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="hero">
-            <h1>📊 HTS Chapter 99</h1>
-            <p class="subtitle">Revision Comparison Report</p>
-            <p class="description">
-                Compare Revision 4 and Revision 5 (2026) of the United States
-                Harmonized Tariff Schedule Chapter 99. View all changes, additions,
-                and modifications in a comprehensive, easy-to-navigate report.
-            </p>
+  <div class="page">
+    <header class="page-header">
+      <h1>HTS Chapter 99</h1>
+      <p class="tagline">
+        One place for the official Rev&nbsp;4 → Rev&nbsp;5 report and for comparing your own Chapter&nbsp;99 PDFs in the browser. Nothing here uploads to a server.
+      </p>
+    </header>
+
+    <main class="hub" aria-label="Tools and reports">
+      <section class="hub-section" aria-labelledby="report-heading">
+        <div class="section-label">Reference</div>
+        <h2 id="report-heading" class="section-title">Pre-built change report (2026)</h2>
+        <p class="section-lead">
+          The numbers below are the summary for this fixed comparison only. Open the report to explore every added, removed, and modified provision.
+        </p>
+        <div class="stats" role="group" aria-label="Rev 4 versus Rev 5 summary">
+          <div class="stat"><div class="stat-val">4,530</div><div class="stat-lbl">Rev 4 items</div></div>
+          <div class="stat"><div class="stat-val">4,426</div><div class="stat-lbl">Rev 5 items</div></div>
+          <div class="stat"><div class="stat-val">62</div><div class="stat-lbl">Added</div></div>
+          <div class="stat"><div class="stat-val">166</div><div class="stat-lbl">Removed</div></div>
+          <div class="stat"><div class="stat-val">17</div><div class="stat-lbl">Modified</div></div>
+          <div class="stat"><div class="stat-val">245</div><div class="stat-lbl">Total changes</div></div>
         </div>
-        
-        <div class="stats-banner">
-            <div class="stat-item">
-                <div class="stat-value">4,530</div>
-                <div class="stat-label">Rev4 Items</div>
+        <a class="btn btn-primary" href="hts_meeting_report.html">Open Rev 4 → Rev 5 report</a>
+      </section>
+
+      <section class="hub-section" aria-labelledby="your-pdfs-heading">
+        <div class="section-label">Your PDFs</div>
+        <h2 id="your-pdfs-heading" class="section-title">Work with your own revisions</h2>
+        <p class="section-lead">
+          Use these when you have different PDFs (any revisions). Both tools run locally in your browser.
+        </p>
+
+        <div class="flow">
+          <div class="flow-step">
+            <span class="step-num" aria-hidden="true">1</span>
+            <div class="step-body">
+              <h3>Upload &amp; store</h3>
+              <p>
+                Convert each Chapter&nbsp;99 PDF to structured JSON, keep a timestamped library in IndexedDB, and compare the two most recent uploads—including sync tasks for downstream use.
+              </p>
+              <a class="btn btn-secondary" href="upload.html">Go to upload &amp; version compare</a>
             </div>
-            <div class="stat-item">
-                <div class="stat-value">4,426</div>
-                <div class="stat-label">Rev5 Items</div>
+          </div>
+          <div class="flow-step">
+            <span class="step-num" aria-hidden="true">2</span>
+            <div class="step-body">
+              <h3>Compare any two PDFs in one go</h3>
+              <p>
+                Pick two files in a single session for a full diff and downloadable HTML report—useful when you do not need the stored library from step&nbsp;1.
+              </p>
+              <a class="btn btn-ghost" href="compare.html">Open two-PDF comparison</a>
             </div>
-            <div class="stat-item">
-                <div class="stat-value">62</div>
-                <div class="stat-label">Added</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">166</div>
-                <div class="stat-label">Removed</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">17</div>
-                <div class="stat-label">Modified</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">245</div>
-                <div class="stat-label">Total Changes</div>
-            </div>
+          </div>
         </div>
-        
-        <div class="visualizations-grid" style="max-width: 1200px;">
-            <a href="compare.html" class="viz-card">
-                <div class="card-header">
-                    <span class="card-icon">⚡</span>
-                    <div class="card-title">Compare Any Two PDFs</div>
-                    <div class="card-subtitle">Upload & diff in your browser</div>
-                </div>
-                <div class="card-body">
-                    <p class="card-description">
-                        Drop in any two HTS Chapter 99 revision PDFs and get a full
-                        change report instantly. Runs entirely in the browser — no
-                        server, no upload. Great for new revisions.
-                    </p>
-                    <ul class="card-features">
-                        <li>Drag-and-drop PDF upload</li>
-                        <li>Handles large files (15–20 MB / 800+ pages)</li>
-                        <li>Auto-detects revision numbers from filename</li>
-                        <li>Same Added / Removed / Modified breakdown</li>
-                        <li>Download the generated report as standalone HTML</li>
-                        <li>100% client-side (private & offline-capable)</li>
-                    </ul>
-                </div>
-                <div class="card-footer">
-                    <span class="card-badge badge-primary">Launch Tool</span>
-                    <span class="arrow-link">Open →</span>
-                </div>
-            </a>
-            <a href="upload.html" class="viz-card">
-                <div class="card-header">
-                    <span class="card-icon">🗂</span>
-                    <div class="card-title">PDF upload &amp; ingestion</div>
-                    <div class="card-subtitle">Convert a Chapter 99 PDF to structured JSON in your browser</div>
-                </div>
-                <div class="card-body">
-                    <p class="card-description">
-                        Upload a single HTS PDF, validate it (20 MB cap, PDF-only,
-                        magic-bytes check), convert it to structured JSON, and keep a
-                        timestamped record — all without a backend.
-                    </p>
-                    <ul class="card-features">
-                        <li>Drag-and-drop or file picker</li>
-                        <li>20 MB maximum, PDF validation (extension, MIME, header)</li>
-                        <li>In-browser PDF → hierarchical JSON conversion</li>
-                        <li>Stored privately in the browser via <code>IndexedDB</code> with an ISO timestamp</li>
-                        <li>Re-download the original PDF or the structured JSON anytime</li>
-                        <li>100% client-side — no server, no upload off your machine</li>
-                    </ul>
-                </div>
-                <div class="card-footer">
-                    <span class="card-badge badge-success">Upload</span>
-                    <span class="arrow-link">Open →</span>
-                </div>
-            </a>
-            <a href="hts_meeting_report.html" class="viz-card">
-                <div class="card-header">
-                    <span class="card-icon">📝</span>
-                    <div class="card-title">Change Summary Report</div>
-                    <div class="card-subtitle">Rev4 → Rev5 Comparison (2026)</div>
-                </div>
-                <div class="card-body">
-                    <p class="card-description">
-                        A comprehensive report highlighting all provisions that changed between
-                        Revision 4 and Revision 5 (2026). View added, removed, and modified items
-                        with side-by-side text comparison.
-                    </p>
-                    <ul class="card-features">
-                        <li>Summary statistics dashboard</li>
-                        <li>Expandable cards with old vs new text</li>
-                        <li>Filter by change type (Added/Removed/Modified)</li>
-                        <li>Search by path or content</li>
-                        <li>Print-friendly layout</li>
-                        <li>Export functionality</li>
-                    </ul>
-                </div>
-                <div class="card-footer">
-                    <span class="card-badge badge-success">View Report</span>
-                    <span class="arrow-link">Open →</span>
-                </div>
-            </a>
-        </div>
-        
-        <div class="footer">
-            <p><strong>HTS Chapter 99: Revision 4 → Revision 5</strong></p>
-            <p>United States Harmonized Tariff Schedule - 2026 Editions</p>
-            <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.8;">
-                Created with comprehensive analysis and creative visualization tools
-            </p>
-        </div>
-    </div>
+      </section>
+    </main>
+
+    <footer class="footnote">
+      <p><strong>HTS Chapter 99</strong> · Rev 4 → Rev 5 · United States Harmonized Tariff Schedule (2026)</p>
+    </footer>
+  </div>
 </body>
 </html>
-
