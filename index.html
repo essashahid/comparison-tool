@@ -234,6 +234,13 @@
             font-size: 0.9em;
         }
         
+        .card-body code {
+            background: rgba(0,0,0,0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        
         .footer {
             text-align: center;
             padding: 60px 20px 40px;
@@ -355,6 +362,32 @@
                 </div>
                 <div class="card-footer">
                     <span class="card-badge badge-primary">Launch Tool</span>
+                    <span class="arrow-link">Open →</span>
+                </div>
+            </a>
+            <a href="upload.html" class="viz-card">
+                <div class="card-header">
+                    <span class="card-icon">🗂</span>
+                    <div class="card-title">PDF upload &amp; ingestion</div>
+                    <div class="card-subtitle">Convert a Chapter 99 PDF to structured JSON in your browser</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-description">
+                        Upload a single HTS PDF, validate it (20 MB cap, PDF-only,
+                        magic-bytes check), convert it to structured JSON, and keep a
+                        timestamped record — all without a backend.
+                    </p>
+                    <ul class="card-features">
+                        <li>Drag-and-drop or file picker</li>
+                        <li>20 MB maximum, PDF validation (extension, MIME, header)</li>
+                        <li>In-browser PDF → hierarchical JSON conversion</li>
+                        <li>Stored privately in the browser via <code>IndexedDB</code> with an ISO timestamp</li>
+                        <li>Re-download the original PDF or the structured JSON anytime</li>
+                        <li>100% client-side — no server, no upload off your machine</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <span class="card-badge badge-success">Upload</span>
                     <span class="arrow-link">Open →</span>
                 </div>
             </a>

@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HTS Chapter 99 — PDF Upload</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg-card: #12121a;
+      --bg-elevated: #1a1a24;
+      --accent: #7c3aed;
+      --accent-glow: rgba(124, 58, 237, 0.3);
+      --green: #10b981;
+      --red: #ef4444;
+      --amber: #f59e0b;
+      --text: #f4f4f5;
+      --text-dim: #a1a1aa;
+      --border: #27272a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    .hero {
+      background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 48px 24px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero .subtitle { color: var(--text-dim); font-size: 1.1rem; }
+    .hero .back-link {
+      display: inline-block;
+      margin-top: 12px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+    .hero .back-link:hover { color: var(--accent); }
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 48px 24px 96px;
+    }
+    .section-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 8px; }
+    .section-sub { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 20px; }
+    .section + .section { margin-top: 40px; }
+    .drop-zone {
+      background: var(--bg-card);
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 40px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .drop-zone:hover, .drop-zone.dragging {
+      border-color: var(--accent);
+      background: var(--bg-elevated);
+      box-shadow: 0 0 30px var(--accent-glow);
+    }
+    .drop-zone.filled { border-color: var(--green); border-style: solid; }
+    .drop-zone .drop-icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.6; }
+    .drop-zone .drop-label { font-weight: 600; margin-bottom: 6px; font-size: 1rem; }
+    .drop-zone .drop-hint { color: var(--text-dim); font-size: 0.85rem; margin-bottom: 10px; }
+    .drop-zone .drop-filename {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text);
+      word-break: break-all;
+      margin-top: 6px;
+    }
+    .drop-zone .drop-filesize { color: var(--text-dim); font-size: 0.75rem; margin-top: 4px; }
+    input[type="file"] { display: none; }
+    .run-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform 0.15s, background 0.15s, border-color 0.15s;
+    }
+    .btn:hover:not(:disabled) { background: var(--bg-elevated); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      padding: 12px 36px;
+      font-weight: 600;
+      box-shadow: 0 4px 20px var(--accent-glow);
+    }
+    .btn.primary:hover:not(:disabled) { transform: translateY(-1px); }
+    .btn.danger { color: #fecaca; border-color: rgba(239, 68, 68, 0.4); }
+    .btn.danger:hover:not(:disabled) { background: rgba(239, 68, 68, 0.12); }
+    .btn.small { padding: 6px 12px; font-size: 0.8rem; }
+    .message {
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 0.9rem;
+      margin-top: 20px;
+      line-height: 1.5;
+    }
+    .message[hidden] { display: none; }
+    .message.success {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid var(--green);
+      color: #a7f3d0;
+    }
+    .message.error {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid var(--red);
+      color: #fecaca;
+    }
+    .message.info {
+      background: rgba(124, 58, 237, 0.12);
+      border: 1px solid var(--accent);
+      color: #ddd6fe;
+    }
+    .message .detail {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      margin-top: 8px;
+      opacity: 0.95;
+    }
+    .progress {
+      margin-top: 16px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .progress[hidden] { display: none; }
+    .progress .label { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 8px; }
+    .progress .bar {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress .bar > div {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), #a855f7);
+      transition: width 0.2s;
+    }
+    .privacy-note {
+      margin-top: 12px;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+    .privacy-note code {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+    }
+    .history {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .history .empty {
+      padding: 32px 20px;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+    .history-row {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+    }
+    .history-row:last-child { border-bottom: none; }
+    .history-row .name {
+      font-weight: 600;
+      word-break: break-all;
+    }
+    .history-row .meta {
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 4px;
+    }
+    .history-row .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .stat-chip {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(124, 58, 237, 0.18);
+      color: #ddd6fe;
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+    .stat-chip.green { background: rgba(16, 185, 129, 0.18); color: #a7f3d0; }
+    .spinner {
+      display: inline-block; width: 1em; height: 1em;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin-right: 6px;
+      vertical-align: -2px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (max-width: 600px) {
+      .history-row { grid-template-columns: 1fr; }
+    }
+    .cmp-banner {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      font-size: 0.88rem;
+      color: var(--text-dim);
+    }
+    .cmp-banner strong { color: var(--text); }
+    .cmp-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .cmp-stat {
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .cmp-stat.added { background: rgba(16, 185, 129, 0.18); color: #a7f3d0; }
+    .cmp-stat.removed { background: rgba(239, 68, 68, 0.16); color: #fecaca; }
+    .cmp-stat.modified { background: rgba(245, 158, 11, 0.2); color: #fde68a; }
+    .cmp-scroll {
+      max-height: 420px;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #0c0c12;
+    }
+    .cmp-row {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8rem;
+    }
+    .cmp-row:last-child { border-bottom: none; }
+    .cmp-row .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      margin-right: 8px;
+    }
+    .cmp-row .tag.A { background: rgba(16, 185, 129, 0.25); color: #6ee7b7; }
+    .cmp-row .tag.R { background: rgba(239, 68, 68, 0.22); color: #fecaca; }
+    .cmp-row .tag.M { background: rgba(245, 158, 11, 0.22); color: #fde68a; }
+    .cmp-code { font-family: 'JetBrains Mono', monospace; color: #e4e4e7; word-break: break-all; }
+    .cmp-sub { color: var(--text-dim); font-size: 0.75rem; margin-top: 6px; line-height: 1.4; }
+    .cmp-txt { margin-top: 6px; white-space: pre-wrap; word-break: break-word; color: #d4d4d8; }
+    .cmp-toolbar {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    @media (min-width: 640px) {
+      .cmp-toolbar { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+    }
+    .cmp-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .cmp-tab {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .cmp-tab:hover { color: var(--text); border-color: #52525b; }
+    .cmp-tab[aria-pressed="true"] {
+      color: #fafafa;
+      border-color: var(--accent);
+      background: rgba(124, 58, 237, 0.2);
+    }
+    .cmp-search-wrap { flex: 1; min-width: 200px; max-width: 420px; }
+    .cmp-search-wrap input {
+      width: 100%;
+      padding: 10px 12px 10px 36px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #0c0c12;
+      color: var(--text);
+      font-size: 0.85rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .cmp-search-wrap { position: relative; }
+    .cmp-search-wrap::before {
+      content: '🔍';
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.75rem;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    .cmp-filter-hint { font-size: 0.78rem; color: var(--text-dim); margin-bottom: 8px; }
+    mark.w-del, mark.hl-del {
+      background: rgba(239, 68, 68, 0.28);
+      color: #fecaca;
+      border-radius: 2px;
+      padding: 0 1px;
+    }
+    mark.w-ins, mark.hl-ins {
+      background: rgba(16, 185, 129, 0.3);
+      color: #a7f3d0;
+      border-radius: 2px;
+      padding: 0 1px;
+    }
+    .cmp-mod-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    @media (max-width: 700px) {
+      .cmp-mod-grid { grid-template-columns: 1fr; }
+    }
+    .cmp-mod-col {
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+    .cmp-mod-col.before { background: rgba(239, 68, 68, 0.06); border-color: rgba(239, 68, 68, 0.25); }
+    .cmp-mod-col.after { background: rgba(16, 185, 129, 0.06); border-color: rgba(16, 185, 129, 0.25); }
+    .cmp-mod-h {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+    .cmp-mod-h.before { color: #f87171; }
+    .cmp-mod-h.after { color: #34d399; }
+    .cmp-row.hidden { display: none; }
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <h1>HTS Chapter 99 — PDF upload</h1>
+    <p class="subtitle">Convert a Chapter 99 PDF into structured JSON — fully in your browser</p>
+    <a href="index.html" class="back-link">← Back to hub</a>
+  </div>
+
+  <div class="container">
+    <div class="section">
+      <h2 class="section-title">1. Choose a Chapter 99 PDF</h2>
+      <p class="section-sub">
+        PDF only. Maximum file size: 20&nbsp;MB. The file is processed and stored
+        entirely inside this browser — it never leaves your machine.
+      </p>
+
+      <div class="drop-zone" id="drop">
+        <div class="drop-icon">📤</div>
+        <div class="drop-label">HTS Chapter 99 PDF</div>
+        <div class="drop-hint">Click or drop a file here</div>
+        <div class="drop-filename"></div>
+        <div class="drop-filesize"></div>
+        <input type="file" id="fileInput" accept="application/pdf,.pdf" />
+      </div>
+
+      <div class="run-row">
+        <button class="btn" id="clearBtn" type="button">Clear</button>
+        <button class="btn primary" id="submitBtn" type="button" disabled>⬆ Upload &amp; convert</button>
+      </div>
+
+      <div class="progress" id="progressPanel" hidden>
+        <div class="label" id="progressLabel">Working…</div>
+        <div class="bar"><div id="progressBar"></div></div>
+      </div>
+
+      <div class="message" id="message" role="status" hidden></div>
+
+      <p class="privacy-note">
+        Stored privately in your browser via <code>IndexedDB</code> under this site's origin.
+        Each record is timestamped at the moment it is saved. Clearing site data
+        will remove all uploads.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">2. Your uploads</h2>
+      <p class="section-sub">
+        Every accepted PDF is kept here with an ISO 8601 timestamp. You can re-download
+        the original PDF, the converted structured JSON, or remove the record.
+      </p>
+
+      <div class="history" id="history">
+        <div class="empty" id="historyEmpty">No PDFs uploaded yet.</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">3. Version comparison (latest vs previous)</h2>
+      <p class="section-sub">
+        The two most recent uploads (by save time) are compared automatically. HTS
+        entries are matched by <code>normalized_path</code> (heading hierarchy), then
+        classified as <strong>added</strong>, <strong>removed</strong>, or
+        <strong>modified</strong>. Use the tabs to show one change type, the search
+        field to find an HTS code or path, and the side-by-side <em>Before / After</em>
+        view for modified text (word-level highlights where text differs).
+      </p>
+      <div class="run-row" style="margin-top:0;margin-bottom:12px;justify-content:flex-start;">
+        <button class="btn" id="recompareBtn" type="button" disabled>↻ Re-run comparison</button>
+        <button class="btn" id="diffJsonBtn" type="button" disabled>Download diff JSON</button>
+      </div>
+      <div id="diffEmpty" class="message info">Upload at least two PDFs to compare the newest upload against the one before it.</div>
+      <div id="diffContent" hidden>
+        <div class="cmp-banner" id="cmpBanner"></div>
+        <div class="cmp-stats" id="cmpStats"></div>
+        <div class="cmp-toolbar">
+          <div class="cmp-tabs" role="tablist" aria-label="Change type">
+            <button type="button" class="cmp-tab" id="tabAll" data-filter="all" aria-pressed="true" role="tab" aria-selected="true">All</button>
+            <button type="button" class="cmp-tab" id="tabAdded" data-filter="added" aria-pressed="false" role="tab" aria-selected="false">Added</button>
+            <button type="button" class="cmp-tab" id="tabRemoved" data-filter="removed" aria-pressed="false" role="tab" aria-selected="false">Removed</button>
+            <button type="button" class="cmp-tab" id="tabModified" data-filter="modified" aria-pressed="false" role="tab" aria-selected="false">Modified</button>
+          </div>
+          <div class="cmp-search-wrap">
+            <input
+              type="search"
+              id="cmpSearch"
+              placeholder="Filter by HTS code, heading, or path…"
+              autocomplete="off"
+              aria-label="Filter changes by HTS code, heading, or path"
+            />
+          </div>
+        </div>
+        <p class="cmp-filter-hint" id="cmpFilterHint" hidden></p>
+        <div class="cmp-scroll" id="cmpScroll"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    if (window.pdfjsLib && window.pdfjsLib.GlobalWorkerOptions) {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+  </script>
+  <script src="pdf_extract.js"></script>
+  <script src="hts_compare.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    const MAX_BYTES = 20 * 1024 * 1024;
+    const PDF_MAGIC = [0x25, 0x50, 0x44, 0x46]; // "%PDF"
+    const DB_NAME = 'hts-chapter99-uploads';
+    const DB_VERSION = 1;
+    const STORE = 'uploads';
+
+    const $ = (id) => document.getElementById(id);
+
+    const drop = $('drop');
+    const fileInput = $('fileInput');
+    const submitBtn = $('submitBtn');
+    const clearBtn = $('clearBtn');
+    const messageEl = $('message');
+    const progressPanel = $('progressPanel');
+    const progressBar = $('progressBar');
+    const progressLabel = $('progressLabel');
+    const historyEl = $('history');
+    const historyEmpty = $('historyEmpty');
+    const recompareBtn = $('recompareBtn');
+    const diffJsonBtn = $('diffJsonBtn');
+    const diffEmpty = $('diffEmpty');
+    const diffContent = $('diffContent');
+    const cmpBanner = $('cmpBanner');
+    const cmpStats = $('cmpStats');
+    const cmpScroll = $('cmpScroll');
+    const cmpSearch = $('cmpSearch');
+    const cmpFilterHint = $('cmpFilterHint');
+
+    let selected = null;
+    let lastDiffPayload = null;
+    let diffViewFilter = 'all';
+    let diffSearchQuery = '';
+    let diffSearchTimer = null;
+
+    /* ---------- IndexedDB helpers ---------- */
+
+    function openDb() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(DB_NAME, DB_VERSION);
+        req.onupgradeneeded = () => {
+          const db = req.result;
+          if (!db.objectStoreNames.contains(STORE)) {
+            const os = db.createObjectStore(STORE, { keyPath: 'id' });
+            os.createIndex('uploadedAt', 'uploadedAt', { unique: false });
+          }
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error || new Error('Failed to open IndexedDB.'));
+      });
+    }
+
+    function tx(db, mode) {
+      return db.transaction(STORE, mode).objectStore(STORE);
+    }
+
+    function dbPut(record) {
+      return openDb().then(
+        (db) =>
+          new Promise((resolve, reject) => {
+            const req = tx(db, 'readwrite').put(record);
+            req.onsuccess = () => resolve();
+            req.onerror = () => reject(req.error);
+          })
+      );
+    }
+
+    function dbGet(id) {
+      return openDb().then(
+        (db) =>
+          new Promise((resolve, reject) => {
+            const req = tx(db, 'readonly').get(id);
+            req.onsuccess = () => resolve(req.result || null);
+            req.onerror = () => reject(req.error);
+          })
+      );
+    }
+
+    function dbDelete(id) {
+      return openDb().then(
+        (db) =>
+          new Promise((resolve, reject) => {
+            const req = tx(db, 'readwrite').delete(id);
+            req.onsuccess = () => resolve();
+            req.onerror = () => reject(req.error);
+          })
+      );
+    }
+
+    function dbList() {
+      return openDb().then(
+        (db) =>
+          new Promise((resolve, reject) => {
+            const out = [];
+            const req = tx(db, 'readonly').openCursor();
+            req.onsuccess = () => {
+              const cursor = req.result;
+              if (cursor) {
+                const v = cursor.value;
+                out.push({
+                  id: v.id,
+                  originalName: v.originalName,
+                  size: v.size,
+                  uploadedAt: v.uploadedAt,
+                  stats: v.stats,
+                });
+                cursor.continue();
+              } else {
+                out.sort((a, b) => (b.uploadedAt || '').localeCompare(a.uploadedAt || ''));
+                resolve(out);
+              }
+            };
+            req.onerror = () => reject(req.error);
+          })
+      );
+    }
+
+    /* ---------- UI helpers ---------- */
+
+    function setMessage(type, html) {
+      messageEl.hidden = false;
+      messageEl.className = 'message ' + type;
+      messageEl.innerHTML = html;
+    }
+    function clearMessage() {
+      messageEl.hidden = true;
+      messageEl.innerHTML = '';
+    }
+    function setProgress(fraction, label) {
+      progressPanel.hidden = false;
+      progressBar.style.width = Math.max(0, Math.min(100, Math.round(fraction * 100))) + '%';
+      if (label) progressLabel.textContent = label;
+    }
+    function hideProgress() {
+      progressPanel.hidden = true;
+      progressBar.style.width = '0%';
+    }
+
+    function fmtBytes(n) {
+      if (n == null) return '—';
+      if (n < 1024) return n + ' B';
+      if (n < 1024 * 1024) return (n / 1024).toFixed(1) + ' KB';
+      return (n / 1024 / 1024).toFixed(2) + ' MB';
+    }
+    function fmtTimestamp(iso) {
+      if (!iso) return '—';
+      try {
+        const d = new Date(iso);
+        return d.toLocaleString() + ' (' + iso + ')';
+      } catch {
+        return iso;
+      }
+    }
+    function uuid() {
+      if (crypto && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+      const bytes = crypto.getRandomValues(new Uint8Array(16));
+      bytes[6] = (bytes[6] & 0x0f) | 0x40;
+      bytes[8] = (bytes[8] & 0x3f) | 0x80;
+      const hex = [...bytes].map((b) => b.toString(16).padStart(2, '0')).join('');
+      return (
+        hex.slice(0, 8) + '-' + hex.slice(8, 12) + '-' + hex.slice(12, 16) + '-' +
+        hex.slice(16, 20) + '-' + hex.slice(20)
+      );
+    }
+    function safeBaseName(name) {
+      const noExt = name.replace(/\.pdf$/i, '');
+      const cleaned = noExt.replace(/[^a-zA-Z0-9._-]+/g, '_').slice(0, 200);
+      return cleaned || 'document';
+    }
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 0);
+    }
+
+    function getItemsForCompare(rec) {
+      if (rec && rec.items && rec.items.length) return rec.items;
+      if (rec && rec.structuredJson && window.HTSExtract && typeof HTSExtract.extractItems === 'function') {
+        return HTSExtract.extractItems(rec.structuredJson);
+      }
+      return [];
+    }
+
+    /** Best-effort label for the HTS heading / code shown in the diff list */
+    function htsCodeLabel(heading, path) {
+      const h = (heading || '').replace(/\/page:\d+$/g, '');
+      if (h) {
+        const m = h.match(/\b(\d{4}\s*\d{2}\s*\d{2}|\d{4}\.\d{2,4}\.\d{2,4})/);
+        if (m) return m[1].replace(/\s/g, '.');
+        const paren = h.match(/^\s*\(([^)]+)\)\s*/);
+        if (paren) return '(' + paren[1] + ')';
+        return h.length > 80 ? h.slice(0, 80) + '…' : h;
+      }
+      const segs = (path || '').split('/').filter(Boolean);
+      const last = segs[segs.length - 1] || '';
+      return last.replace(/\/page:\d+$/g, '') || '—';
+    }
+
+    function tokenizeWords(s) {
+      if (!s) return [];
+      return s.split(/(\s+)/).filter(function (t) {
+        return t.length > 0;
+      });
+    }
+
+    /**
+     * Word-level LCS diff → HTML with <mark class="w-del"> / <mark class="w-ins">.
+     */
+    function buildWordDiffHtml(before, after) {
+      const a = tokenizeWords(before);
+      const b = tokenizeWords(after);
+      const m = a.length;
+      const n = b.length;
+      if (m * n > 800000) {
+        return { before: escapeHtml(before || ''), after: escapeHtml(after || '') };
+      }
+      const dp = new Array(m + 1);
+      for (let i = 0; i <= m; i++) {
+        dp[i] = new Array(n + 1);
+        for (let j = 0; j <= n; j++) dp[i][j] = 0;
+      }
+      for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+          if (a[i - 1] === b[j - 1]) dp[i][j] = dp[i - 1][j - 1] + 1;
+          else dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+        }
+      }
+      const ops = [];
+      let i = m;
+      let j = n;
+      while (i > 0 || j > 0) {
+        if (i > 0 && j > 0 && a[i - 1] === b[j - 1]) {
+          ops.unshift({ t: 'E', sa: a[i - 1], sb: b[j - 1] });
+          i--;
+          j--;
+        } else if (j > 0 && (i === 0 || dp[i][j - 1] >= dp[i - 1][j])) {
+          ops.unshift({ t: 'A', sb: b[j - 1] });
+          j--;
+        } else {
+          ops.unshift({ t: 'D', sa: a[i - 1] });
+          i--;
+        }
+      }
+      let hBefore = '';
+      let hAfter = '';
+      for (let k = 0; k < ops.length; k++) {
+        const o = ops[k];
+        if (o.t === 'E') {
+          hBefore += escapeHtml(o.sa);
+          hAfter += escapeHtml(o.sb);
+        } else if (o.t === 'D') {
+          hBefore += '<mark class="w-del">' + escapeHtml(o.sa) + '</mark>';
+        } else {
+          hAfter += '<mark class="w-ins">' + escapeHtml(o.sb) + '</mark>';
+        }
+      }
+      return { before: hBefore, after: hAfter };
+    }
+
+    function resultSearchText(r) {
+      const code = htsCodeLabel(r.heading, r.path);
+      return [code, r.heading || '', r.path || '', r.normalized_path || '', r.old_text || '', r.new_text || '']
+        .join('\n')
+        .toLowerCase();
+    }
+
+    function rowMatchesFilterAndSearch(r) {
+      if (diffViewFilter !== 'all' && r.type !== diffViewFilter) return false;
+      if (!diffSearchQuery) return true;
+      return resultSearchText(r).indexOf(diffSearchQuery.toLowerCase()) !== -1;
+    }
+
+    function buildDiffRowHtml(r) {
+      const code = htsCodeLabel(r.heading, r.path);
+      const pathLine = '<div class="cmp-sub">Path: ' + escapeHtml(r.normalized_path || r.path) + '</div>';
+      if (r.type === 'added') {
+        return (
+          '<div class="cmp-row" data-type="added">' +
+          '<span class="tag A">Added</span>' +
+          '<span class="cmp-code">' + escapeHtml(code) + '</span>' +
+          pathLine +
+          '<div class="cmp-txt">' + escapeHtml(r.new_text || '') + '</div></div>'
+        );
+      }
+      if (r.type === 'removed') {
+        return (
+          '<div class="cmp-row" data-type="removed">' +
+          '<span class="tag R">Removed</span>' +
+          '<span class="cmp-code">' + escapeHtml(code) + '</span>' +
+          pathLine +
+          '<div class="cmp-txt">' + escapeHtml(r.old_text || '') + '</div></div>'
+        );
+      }
+      const wd = buildWordDiffHtml(r.old_text || '', r.new_text || '');
+      return (
+        '<div class="cmp-row" data-type="modified">' +
+        '<span class="tag M">Modified</span>' +
+        '<span class="cmp-code">' + escapeHtml(code) + '</span>' +
+        pathLine +
+        '<div class="cmp-mod-grid">' +
+        '<div class="cmp-mod-col before"><div class="cmp-mod-h before">Before (previous version)</div>' +
+        '<div class="cmp-txt" style="margin-top:0;white-space:pre-wrap">' + wd.before + '</div></div>' +
+        '<div class="cmp-mod-col after"><div class="cmp-mod-h after">After (latest version)</div>' +
+        '<div class="cmp-txt" style="margin-top:0;white-space:pre-wrap">' + wd.after + '</div></div>' +
+        '</div></div>'
+      );
+    }
+
+    function setDiffTabsActive(filter) {
+      document.querySelectorAll('.cmp-tab[data-filter]').forEach(function (btn) {
+        const on = btn.getAttribute('data-filter') === filter;
+        btn.setAttribute('aria-pressed', on);
+        btn.setAttribute('aria-selected', on);
+      });
+    }
+
+    function renderDiffList() {
+      if (!lastDiffPayload || !Array.isArray(lastDiffPayload.results)) {
+        if (cmpFilterHint) cmpFilterHint.hidden = true;
+        return;
+      }
+      const all = lastDiffPayload.results;
+      const total = all.length;
+      const filtered = all.filter(rowMatchesFilterAndSearch);
+      if (cmpFilterHint) {
+        if (total === 0) {
+          cmpFilterHint.hidden = true;
+        } else {
+          cmpFilterHint.hidden = false;
+          const hasFilter = diffViewFilter !== 'all' || !!diffSearchQuery;
+          if (hasFilter) {
+            cmpFilterHint.textContent =
+              'Showing ' + filtered.length + ' of ' + total + (total === 1 ? ' change' : ' changes') + '.';
+          } else {
+            cmpFilterHint.textContent = 'Showing all ' + total + (total === 1 ? ' change' : ' changes') + '.';
+          }
+        }
+      }
+      if (total === 0) {
+        cmpScroll.innerHTML =
+          '<div class="cmp-row" style="color:var(--text-dim)">No differences detected (paths and text match).</div>';
+        return;
+      }
+      if (filtered.length === 0) {
+        cmpScroll.innerHTML =
+          '<div class="cmp-row" style="color:var(--text-dim)">No changes match the current filter or search. Try &quot;All&quot; or clear the search.</div>';
+        return;
+      }
+      cmpScroll.innerHTML = filtered.map(buildDiffRowHtml).join('');
+    }
+
+    function wireDiffViewControls() {
+      if (cmpSearch && !cmpSearch.dataset.wired) {
+        cmpSearch.dataset.wired = '1';
+        cmpSearch.addEventListener('input', function () {
+          clearTimeout(diffSearchTimer);
+          diffSearchTimer = setTimeout(function () {
+            diffSearchQuery = (cmpSearch.value || '').trim();
+            renderDiffList();
+          }, 120);
+        });
+      }
+      const tabs = document.querySelector('.cmp-tabs');
+      if (tabs && !tabs.dataset.wired) {
+        tabs.dataset.wired = '1';
+        tabs.addEventListener('click', function (e) {
+          const tab = e.target && e.target.closest && e.target.closest('button.cmp-tab[data-filter]');
+          if (!tab) return;
+          diffViewFilter = tab.getAttribute('data-filter') || 'all';
+          setDiffTabsActive(diffViewFilter);
+          renderDiffList();
+        });
+      }
+    }
+
+    /* ---------- version comparison (latest JSON vs previous) ---------- */
+
+    async function runVersionComparison() {
+      if (!window.HTSCompare) {
+        recompareBtn.disabled = true;
+        diffJsonBtn.disabled = true;
+        diffContent.hidden = true;
+        diffEmpty.hidden = false;
+        diffEmpty.className = 'message error';
+        diffEmpty.textContent = 'Could not load comparison engine (hts_compare.js).';
+        lastDiffPayload = null;
+        return;
+      }
+      let entries;
+      try {
+        entries = await dbList();
+      } catch {
+        diffEmpty.hidden = false;
+        diffEmpty.className = 'message error';
+        diffEmpty.textContent = 'Could not list uploads for comparison.';
+        diffContent.hidden = true;
+        recompareBtn.disabled = true;
+        diffJsonBtn.disabled = true;
+        lastDiffPayload = null;
+        return;
+      }
+
+      recompareBtn.disabled = entries.length < 2;
+      if (entries.length < 2) {
+        diffEmpty.hidden = false;
+        diffEmpty.className = 'message info';
+        diffEmpty.textContent =
+          'Upload at least two PDFs to compare the newest upload against the one before it.';
+        diffContent.hidden = true;
+        diffJsonBtn.disabled = true;
+        lastDiffPayload = null;
+        return;
+      }
+
+      const latestMeta = entries[0];
+      const prevMeta = entries[1];
+      let latestRec;
+      let prevRec;
+      try {
+        [latestRec, prevRec] = await Promise.all([dbGet(latestMeta.id), dbGet(prevMeta.id)]);
+      } catch (e) {
+        diffEmpty.hidden = false;
+        diffEmpty.className = 'message error';
+        diffEmpty.textContent = 'Could not read stored records: ' + (e.message || e);
+        diffContent.hidden = true;
+        diffJsonBtn.disabled = true;
+        return;
+      }
+      if (!latestRec || !prevRec) {
+        diffEmpty.hidden = false;
+        diffEmpty.className = 'message error';
+        diffEmpty.textContent = 'Missing stored data for one of the two versions.';
+        diffContent.hidden = true;
+        diffJsonBtn.disabled = true;
+        return;
+      }
+
+      const newItems = getItemsForCompare(latestRec);
+      const oldItems = getItemsForCompare(prevRec);
+      const results = window.HTSCompare.compareData(oldItems, newItems);
+      const added = results.filter((r) => r.type === 'added').length;
+      const removed = results.filter((r) => r.type === 'removed').length;
+      const modified = results.filter((r) => r.type === 'modified').length;
+
+      lastDiffPayload = {
+        comparedAt: new Date().toISOString(),
+        previous: {
+          id: prevMeta.id,
+          originalName: prevMeta.originalName,
+          uploadedAt: prevMeta.uploadedAt,
+          itemCount: oldItems.length,
+        },
+        latest: {
+          id: latestMeta.id,
+          originalName: latestMeta.originalName,
+          uploadedAt: latestMeta.uploadedAt,
+          itemCount: newItems.length,
+        },
+        summary: { added, removed, modified, total: results.length },
+        results,
+      };
+
+      cmpBanner.innerHTML =
+        '<strong>Previous (older)</strong> — ' + escapeHtml(prevMeta.originalName) +
+        ' &middot; ' + escapeHtml(fmtTimestamp(prevMeta.uploadedAt)) + '<br/>' +
+        '<strong>Latest (newer)</strong> — ' + escapeHtml(latestMeta.originalName) +
+        ' &middot; ' + escapeHtml(fmtTimestamp(latestMeta.uploadedAt));
+
+      cmpStats.innerHTML =
+        '<span class="cmp-stat added">Added: ' + added + '</span>' +
+        '<span class="cmp-stat removed">Removed: ' + removed + '</span>' +
+        '<span class="cmp-stat modified">Modified: ' + modified + '</span>' +
+        '<span class="cmp-stat" style="background:rgba(255,255,255,0.08);color:#a1a1aa;">Total changes: ' +
+        results.length + '</span>';
+
+      diffViewFilter = 'all';
+      diffSearchQuery = '';
+      if (cmpSearch) cmpSearch.value = '';
+      setDiffTabsActive('all');
+      wireDiffViewControls();
+      renderDiffList();
+
+      diffEmpty.hidden = true;
+      diffContent.hidden = false;
+      diffJsonBtn.disabled = false;
+    }
+
+    /* ---------- validation ---------- */
+
+    function validateName(file) {
+      if (!/\.pdf$/i.test(file.name)) {
+        return 'Only PDF files are allowed (filename must end in .pdf).';
+      }
+      return null;
+    }
+    function validateSize(file) {
+      if (file.size > MAX_BYTES) {
+        return (
+          'This file exceeds the 20 MB limit (' +
+          (file.size / 1024 / 1024).toFixed(1) + ' MB).'
+        );
+      }
+      if (file.size === 0) return 'The file is empty.';
+      return null;
+    }
+    function validateMime(file) {
+      const mt = (file.type || '').toLowerCase();
+      const ok =
+        !mt ||
+        mt === 'application/pdf' ||
+        mt === 'application/x-pdf' ||
+        mt === 'application/octet-stream' ||
+        mt === 'binary/octet-stream';
+      if (!ok) return 'Unexpected content type "' + mt + '"; the file must be a PDF.';
+      return null;
+    }
+    async function validateMagic(file) {
+      const head = new Uint8Array(await file.slice(0, 4).arrayBuffer());
+      for (let i = 0; i < PDF_MAGIC.length; i++) {
+        if (head[i] !== PDF_MAGIC[i]) {
+          return 'The file is not a valid PDF (header bytes do not match %PDF).';
+        }
+      }
+      return null;
+    }
+
+    /* ---------- selection ---------- */
+
+    function onFileChosen(file) {
+      clearMessage();
+      hideProgress();
+      if (!file) return;
+
+      const errs = [validateName(file), validateSize(file), validateMime(file)].filter(Boolean);
+      if (errs.length) {
+        selected = null;
+        fileInput.value = '';
+        drop.classList.remove('filled');
+        drop.querySelector('.drop-filename').textContent = '';
+        drop.querySelector('.drop-filesize').textContent = '';
+        submitBtn.disabled = true;
+        setMessage('error', errs[0]);
+        return;
+      }
+
+      selected = file;
+      drop.querySelector('.drop-filename').textContent = file.name;
+      drop.querySelector('.drop-filesize').textContent = fmtBytes(file.size);
+      drop.classList.add('filled');
+      submitBtn.disabled = false;
+    }
+
+    function clearSelection() {
+      selected = null;
+      fileInput.value = '';
+      drop.classList.remove('filled');
+      drop.querySelector('.drop-filename').textContent = '';
+      drop.querySelector('.drop-filesize').textContent = '';
+      submitBtn.disabled = true;
+      clearMessage();
+      hideProgress();
+    }
+
+    /* ---------- upload + convert ---------- */
+
+    async function handleSubmit() {
+      if (!selected) return;
+
+      submitBtn.disabled = true;
+      clearBtn.disabled = true;
+      clearMessage();
+
+      const magicError = await validateMagic(selected);
+      if (magicError) {
+        setMessage('error', magicError);
+        submitBtn.disabled = false;
+        clearBtn.disabled = false;
+        return;
+      }
+
+      setProgress(0.02, 'Reading file…');
+      let buffer;
+      try {
+        buffer = await selected.arrayBuffer();
+      } catch (e) {
+        hideProgress();
+        setMessage('error', 'Could not read the file: ' + (e.message || e));
+        submitBtn.disabled = false;
+        clearBtn.disabled = false;
+        return;
+      }
+
+      let extraction;
+      try {
+        // Pass a copy because pdf.js takes ownership of the underlying buffer.
+        const pdfBuffer = buffer.slice(0);
+        extraction = await window.HTSExtract.extractStructuredJson(
+          pdfBuffer,
+          ({ fraction, message }) => setProgress(fraction, message)
+        );
+      } catch (e) {
+        hideProgress();
+        setMessage(
+          'error',
+          'Conversion failed: ' + (e && e.message ? e.message : String(e))
+        );
+        submitBtn.disabled = false;
+        clearBtn.disabled = false;
+        return;
+      }
+
+      setProgress(1, 'Saving…');
+
+      const id = uuid();
+      const uploadedAt = new Date().toISOString();
+      const record = {
+        id,
+        originalName: selected.name,
+        size: selected.size,
+        mimeType: selected.type || 'application/pdf',
+        uploadedAt,
+        pdfBlob: new Blob([buffer], { type: 'application/pdf' }),
+        structuredJson: extraction.tree,
+        items: extraction.items,
+        stats: extraction.stats,
+      };
+
+      try {
+        await dbPut(record);
+      } catch (e) {
+        hideProgress();
+        const quotaHint =
+          e && /quota|storage/i.test(e.name + ' ' + (e.message || ''))
+            ? ' Browser storage is full — delete older uploads or clear site data.'
+            : '';
+        setMessage(
+          'error',
+          'Saved-to-browser failed: ' + (e.message || e) + quotaHint
+        );
+        submitBtn.disabled = false;
+        clearBtn.disabled = false;
+        return;
+      }
+
+      hideProgress();
+      const detail =
+        '<div class="detail">' +
+        'File: ' + escapeHtml(selected.name) + '<br/>' +
+        'Saved at: ' + escapeHtml(uploadedAt) + '<br/>' +
+        'Pages: ' + extraction.stats.pages + ' &middot; ' +
+        'Subchapters: ' + extraction.stats.subchapters + ' &middot; ' +
+        'Headings: ' + extraction.stats.headings +
+        '</div>';
+      setMessage(
+        'success',
+        '✅ Upload received, validated, and converted to structured JSON.' + detail
+      );
+
+      clearSelection();
+      await refreshHistory();
+    }
+
+    function escapeHtml(s) {
+      return (s || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    /* ---------- history ---------- */
+
+    async function refreshHistory() {
+      let entries;
+      try {
+        entries = await dbList();
+      } catch (e) {
+        historyEmpty.hidden = false;
+        historyEmpty.textContent = 'Could not read upload history: ' + (e.message || e);
+        await runVersionComparison();
+        return;
+      }
+
+      [...historyEl.querySelectorAll('.history-row')].forEach((n) => n.remove());
+
+      if (entries.length === 0) {
+        historyEmpty.hidden = false;
+        historyEmpty.textContent = 'No PDFs uploaded yet.';
+        await runVersionComparison();
+        return;
+      }
+      historyEmpty.hidden = true;
+
+      for (const e of entries) {
+        const row = document.createElement('div');
+        row.className = 'history-row';
+        const stats = e.stats || {};
+        row.innerHTML =
+          '<div>' +
+          '<div class="name">' + escapeHtml(e.originalName) +
+          '<span class="stat-chip green">' + (stats.subchapters || 0) + ' subchapters</span>' +
+          '<span class="stat-chip">' + (stats.headings || 0) + ' headings</span>' +
+          '</div>' +
+          '<div class="meta">' +
+          fmtBytes(e.size) + ' &middot; saved ' + escapeHtml(fmtTimestamp(e.uploadedAt)) +
+          '<br/>id: ' + escapeHtml(e.id) +
+          '</div>' +
+          '</div>' +
+          '<div class="actions">' +
+          '<button class="btn small" data-act="pdf" data-id="' + e.id + '">Download PDF</button>' +
+          '<button class="btn small" data-act="json" data-id="' + e.id + '">Download JSON</button>' +
+          '<button class="btn small danger" data-act="del" data-id="' + e.id + '">Delete</button>' +
+          '</div>';
+        historyEl.appendChild(row);
+      }
+      await runVersionComparison();
+    }
+
+    historyEl.addEventListener('click', async (ev) => {
+      const btn = ev.target.closest('button[data-act]');
+      if (!btn) return;
+      const id = btn.getAttribute('data-id');
+      const act = btn.getAttribute('data-act');
+      btn.disabled = true;
+      try {
+        if (act === 'pdf') {
+          const rec = await dbGet(id);
+          if (!rec) throw new Error('Record not found.');
+          downloadBlob(rec.pdfBlob, safeBaseName(rec.originalName) + '.pdf');
+        } else if (act === 'json') {
+          const rec = await dbGet(id);
+          if (!rec) throw new Error('Record not found.');
+          const blob = new Blob(
+            [JSON.stringify(rec.structuredJson, null, 2)],
+            { type: 'application/json' }
+          );
+          downloadBlob(blob, safeBaseName(rec.originalName) + '.json');
+        } else if (act === 'del') {
+          if (!confirm('Delete this upload from your browser? This cannot be undone.')) return;
+          await dbDelete(id);
+          await refreshHistory();
+        }
+      } catch (e) {
+        setMessage('error', 'Action failed: ' + (e.message || e));
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    /* ---------- wire-up ---------- */
+
+    drop.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => onFileChosen(e.target.files[0]));
+    drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('dragging'); });
+    drop.addEventListener('dragleave', () => drop.classList.remove('dragging'));
+    drop.addEventListener('drop', (e) => {
+      e.preventDefault();
+      drop.classList.remove('dragging');
+      onFileChosen(e.dataTransfer.files[0]);
+    });
+    submitBtn.addEventListener('click', () => {
+      handleSubmit().finally(() => {
+        clearBtn.disabled = false;
+      });
+    });
+    clearBtn.addEventListener('click', clearSelection);
+    recompareBtn.addEventListener('click', () => {
+      runVersionComparison();
+    });
+    diffJsonBtn.addEventListener('click', () => {
+      if (!lastDiffPayload) return;
+      const iso = (lastDiffPayload.comparedAt || new Date().toISOString())
+        .replace(/[:.]/g, '-')
+        .slice(0, 19);
+      const blob = new Blob([JSON.stringify(lastDiffPayload, null, 2)], { type: 'application/json' });
+      downloadBlob(blob, 'hts-chapter99-diff-' + iso + '.json');
+    });
+
+    // Surface a friendly error if IndexedDB isn't available (private mode, very old browsers).
+    if (!('indexedDB' in window)) {
+      setMessage(
+        'error',
+        'This browser does not support IndexedDB, which is required to store uploads locally. ' +
+        'Try a modern browser (Chrome, Edge, Firefox, Safari) outside private mode.'
+      );
+      submitBtn.disabled = true;
+    }
+
+    (async function init() {
+      await refreshHistory();
+    })();
+  })();
+  </script>
+</body>
+</html>
