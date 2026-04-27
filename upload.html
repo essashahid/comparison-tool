@@ -52,7 +52,7 @@
     }
     .hero .back-link:hover { color: var(--accent); }
     .container {
-      max-width: 880px;
+      max-width: 960px;
       margin: 0 auto;
       padding: 48px 24px 96px;
     }
@@ -391,6 +391,140 @@
     .cmp-mod-h.before { color: #f87171; }
     .cmp-mod-h.after { color: #34d399; }
     .cmp-row.hidden { display: none; }
+    .task-dash-summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .task-dash-pill {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text-dim);
+    }
+    .task-dash-pill.pend { background: rgba(124, 58, 237, 0.15); color: #ddd6fe; border-color: rgba(124, 58, 237, 0.35); }
+    .task-dash-pill.prog { background: rgba(59, 130, 246, 0.15); color: #93c5fd; border-color: rgba(59, 130, 246, 0.35); }
+    .task-dash-pill.done { background: rgba(16, 185, 129, 0.15); color: #a7f3d0; border-color: rgba(16, 185, 129, 0.35); }
+    .task-dash-pill.fail { background: rgba(239, 68, 68, 0.15); color: #fecaca; border-color: rgba(239, 68, 68, 0.35); }
+    .task-dash-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .task-dash-toolbar label {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .task-dash-toolbar select {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #0c0c12;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.8rem;
+    }
+    .task-dash-scroll {
+      max-height: 480px;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #0c0c12;
+    }
+    .task-dash-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+    .task-dash-table th,
+    .task-dash-table td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .task-dash-table th {
+      position: sticky;
+      top: 0;
+      background: var(--bg-elevated);
+      color: var(--text-dim);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 0.68rem;
+      z-index: 1;
+    }
+    .task-dash-table tr:last-child td { border-bottom: none; }
+    .task-dash-table select.task-status-select {
+      max-width: 140px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.75rem;
+    }
+    .task-type-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+    }
+    .task-type-tag.added { background: rgba(16, 185, 129, 0.22); color: #6ee7b7; }
+    .task-type-tag.removed { background: rgba(239, 68, 68, 0.22); color: #fecaca; }
+    .task-type-tag.modified { background: rgba(245, 158, 11, 0.22); color: #fde68a; }
+    .task-dash-code { font-family: 'JetBrains Mono', monospace; word-break: break-all; color: #e4e4e7; }
+    .task-dash-meta { color: var(--text-dim); font-size: 0.72rem; margin-top: 4px; line-height: 1.4; }
+    .task-err-box {
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+    }
+    .task-err-box .task-err-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #f87171;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+    .task-err-box textarea {
+      width: 100%;
+      min-height: 56px;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      background: rgba(0, 0, 0, 0.25);
+      color: #fecaca;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      resize: vertical;
+    }
+    .task-err-placeholder {
+      color: var(--text-dim);
+      font-style: italic;
+      font-size: 0.72rem;
+    }
+    .task-dash-empty {
+      padding: 28px 16px;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
     .visually-hidden {
       position: absolute;
       width: 1px;
@@ -465,7 +599,11 @@
         The two most recent uploads (by save time) are compared automatically. HTS
         entries are matched by <code>normalized_path</code> (heading hierarchy), then
         classified as <strong>added</strong>, <strong>removed</strong>, or
-        <strong>modified</strong>. Use the tabs to show one change type, the search
+        <strong>modified</strong>. Each distinct change creates a <strong>Pending</strong> sync task
+        (deduped per version pair): <em>Create new entry</em> (added),
+        <em>Update existing entry</em> (modified, with before/after text),
+        or removal tasks with optional reason — all included in <em>Download diff JSON</em>.
+        Use the tabs to show one change type, the search
         field to find an HTS code or path, and the side-by-side <em>Before / After</em>
         view for modified text (word-level highlights where text differs).
       </p>
@@ -498,6 +636,50 @@
         <div class="cmp-scroll" id="cmpScroll"></div>
       </div>
     </div>
+
+    <div class="section" id="taskDashSection">
+      <h2 class="section-title">4. Task monitoring</h2>
+      <p class="section-sub">
+        Track execution of sync tasks stored in your browser. Set status to
+        <strong>Pending</strong>, <strong>In Progress</strong>, <strong>Completed</strong>, or
+        <strong>Failed</strong>. Failed tasks can record an error message for visibility.
+      </p>
+      <div id="taskDashRoot">
+        <div class="task-dash-summary" id="taskDashSummary" aria-live="polite"></div>
+        <div class="task-dash-toolbar">
+          <div class="cmp-tabs" role="tablist" aria-label="Filter by change type">
+            <button type="button" class="cmp-tab dash-change-tab" data-dash-change="all" aria-pressed="true">All types</button>
+            <button type="button" class="cmp-tab dash-change-tab" data-dash-change="added" aria-pressed="false">Added</button>
+            <button type="button" class="cmp-tab dash-change-tab" data-dash-change="removed" aria-pressed="false">Removed</button>
+            <button type="button" class="cmp-tab dash-change-tab" data-dash-change="modified" aria-pressed="false">Modified</button>
+          </div>
+          <label>
+            Status
+            <select id="dashStatusFilter" aria-label="Filter by task status">
+              <option value="all">All statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+              <option value="Failed">Failed</option>
+            </select>
+          </label>
+        </div>
+        <div class="task-dash-empty" id="taskDashEmpty" hidden>No sync tasks yet. Compare two uploads in section 3 to create tasks.</div>
+        <div class="task-dash-scroll" id="taskDashScroll" hidden>
+          <table class="task-dash-table" id="taskDashTable">
+            <thead>
+              <tr>
+                <th scope="col">Type</th>
+                <th scope="col">HTS / action</th>
+                <th scope="col">Status</th>
+                <th scope="col">Version</th>
+              </tr>
+            </thead>
+            <tbody id="taskDashTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -516,8 +698,10 @@
     const MAX_BYTES = 20 * 1024 * 1024;
     const PDF_MAGIC = [0x25, 0x50, 0x44, 0x46]; // "%PDF"
     const DB_NAME = 'hts-chapter99-uploads';
-    const DB_VERSION = 1;
+    const DB_VERSION = 2;
     const STORE = 'uploads';
+    /** IndexedDB store for all HTS sync tasks (remove / create / update). */
+    const TASK_STORE = 'removalTasks';
 
     const $ = (id) => document.getElementById(id);
 
@@ -546,6 +730,10 @@
     let diffViewFilter = 'all';
     let diffSearchQuery = '';
     let diffSearchTimer = null;
+    let dashChangeFilter = 'all';
+    let dashStatusFilter = 'all';
+    const TASK_VALID_STATUSES = ['Pending', 'In Progress', 'Completed', 'Failed'];
+    const errSaveTimers = Object.create(null);
 
     /* ---------- IndexedDB helpers ---------- */
 
@@ -558,6 +746,9 @@
             const os = db.createObjectStore(STORE, { keyPath: 'id' });
             os.createIndex('uploadedAt', 'uploadedAt', { unique: false });
           }
+          if (!db.objectStoreNames.contains(TASK_STORE)) {
+            db.createObjectStore(TASK_STORE, { keyPath: 'id' });
+          }
         };
         req.onsuccess = () => resolve(req.result);
         req.onerror = () => reject(req.error || new Error('Failed to open IndexedDB.'));
@@ -566,6 +757,52 @@
 
     function tx(db, mode) {
       return db.transaction(STORE, mode).objectStore(STORE);
+    }
+
+    function taskTx(db, mode) {
+      return db.transaction(TASK_STORE, mode).objectStore(TASK_STORE);
+    }
+
+    function dbGetSyncTask(id) {
+      return openDb().then(
+        (db) =>
+          new Promise((resolve, reject) => {
+            const req = taskTx(db, 'readonly').get(id);
+            req.onsuccess = () => resolve(req.result || null);
+            req.onerror = () => reject(req.error);
+          })
+      );
+    }
+
+    function dbPutSyncTask(task) {
+      return openDb().then(
+        (db) =>
+          new Promise((resolve, reject) => {
+            const req = taskTx(db, 'readwrite').put(task);
+            req.onsuccess = () => resolve();
+            req.onerror = () => reject(req.error);
+          })
+      );
+    }
+
+    function dbListAllSyncTasks() {
+      return openDb().then(
+        (db) =>
+          new Promise((resolve, reject) => {
+            const out = [];
+            const req = taskTx(db, 'readonly').openCursor();
+            req.onsuccess = () => {
+              const cursor = req.result;
+              if (cursor) {
+                out.push(cursor.value);
+                cursor.continue();
+              } else {
+                resolve(out);
+              }
+            };
+            req.onerror = () => reject(req.error);
+          })
+      );
     }
 
     function dbPut(record) {
@@ -698,6 +935,144 @@
         return HTSExtract.extractItems(rec.structuredJson);
       }
       return [];
+    }
+
+    /**
+     * If the removed row’s text mentions repeal/deletion/etc., return a short reason; else null.
+     */
+    function inferRemovalReason(oldText) {
+      if (!oldText) return null;
+      const t = String(oldText).replace(/\s+/g, ' ').trim();
+      if (!t) return null;
+      if (
+        /\b(repeal(?:ed|s)?|deleted?|removed?|superseded?|terminated?|obsolete|rescind(?:ed)?|no longer (?:in )?effect)\b/i.test(
+          t
+        )
+      ) {
+        return t.length > 400 ? t.slice(0, 397) + '…' : t;
+      }
+      return null;
+    }
+
+    function syncTaskId(prefix, previousUploadId, latestUploadId, normKey) {
+      return (
+        prefix +
+        ':' +
+        previousUploadId +
+        ':' +
+        latestUploadId +
+        ':' +
+        encodeURIComponent(normKey)
+      );
+    }
+
+    function versionReferenceFromPayload(payload) {
+      return {
+        comparedAt: payload.comparedAt,
+        previous: { ...payload.previous },
+        latest: { ...payload.latest },
+      };
+    }
+
+    async function getOrPutSyncTask(id, buildNew) {
+      let task = await dbGetSyncTask(id);
+      if (!task) {
+        task = buildNew();
+        try {
+          await dbPutSyncTask(task);
+        } catch (e) {
+          console.warn('Could not persist sync task', id, e);
+        }
+      }
+      return task;
+    }
+
+    /** Legacy removal rows may lack taskAction; normalize for downstream JSON. */
+    function normalizeSyncTaskForExport(task) {
+      if (task && !task.taskAction && /^removal:/.test(String(task.id))) {
+        return Object.assign({}, task, { taskAction: 'Remove HTS entry' });
+      }
+      return task;
+    }
+
+    /**
+     * Pending tasks per change type, deduped by normalized path per compared version pair.
+     * Persisted in IndexedDB; returned lists match this comparison (existing + newly created).
+     */
+    async function buildAndPersistAllHtsTasks(payload) {
+      const versionReference = versionReferenceFromPayload(payload);
+      const prevId = payload.previous.id;
+      const latestId = payload.latest.id;
+      const removalTasks = [];
+      const createTasks = [];
+      const updateTasks = [];
+      const seenRemoved = new Set();
+      const seenAdded = new Set();
+      const seenModified = new Set();
+
+      for (const r of payload.results || []) {
+        if (r.type === 'removed') {
+          const normKey = r.normalized_path || r.path || '';
+          if (!normKey || seenRemoved.has(normKey)) continue;
+          seenRemoved.add(normKey);
+          const id = syncTaskId('removal', prevId, latestId, normKey);
+          const task = await getOrPutSyncTask(id, () => ({
+            id,
+            taskAction: 'Remove HTS entry',
+            htsCode: htsCodeLabel(r.heading, r.path),
+            removalReason: inferRemovalReason(r.old_text),
+            versionReference,
+            status: 'Pending',
+            lastError: null,
+            createdAt: payload.comparedAt,
+            updatedAt: payload.comparedAt,
+          }));
+          removalTasks.push(normalizeSyncTaskForExport(task));
+        } else if (r.type === 'added') {
+          const normKey = r.normalized_path || r.path || '';
+          if (!normKey || seenAdded.has(normKey)) continue;
+          seenAdded.add(normKey);
+          const id = syncTaskId('create', prevId, latestId, normKey);
+          const task = await getOrPutSyncTask(id, () => ({
+            id,
+            taskAction: 'Create new entry',
+            htsCode: htsCodeLabel(r.heading, r.path),
+            beforeText: null,
+            afterText: r.new_text != null ? r.new_text : null,
+            path: r.path,
+            normalized_path: r.normalized_path,
+            versionReference,
+            status: 'Pending',
+            lastError: null,
+            createdAt: payload.comparedAt,
+            updatedAt: payload.comparedAt,
+          }));
+          createTasks.push(task);
+        } else if (r.type === 'modified') {
+          const normKey = r.normalized_path || r.path || '';
+          if (!normKey || seenModified.has(normKey)) continue;
+          seenModified.add(normKey);
+          const id = syncTaskId('update', prevId, latestId, normKey);
+          const task = await getOrPutSyncTask(id, () => ({
+            id,
+            taskAction: 'Update existing entry',
+            htsCode: htsCodeLabel(r.heading, r.path),
+            beforeText: r.old_text != null ? r.old_text : null,
+            afterText: r.new_text != null ? r.new_text : null,
+            path: r.path,
+            old_path: r.old_path,
+            normalized_path: r.normalized_path,
+            versionReference,
+            status: 'Pending',
+            lastError: null,
+            createdAt: payload.comparedAt,
+            updatedAt: payload.comparedAt,
+          }));
+          updateTasks.push(task);
+        }
+      }
+
+      return { removalTasks, createTasks, updateTasks };
     }
 
     /** Best-effort label for the HTS heading / code shown in the diff list */
@@ -895,6 +1270,7 @@
     /* ---------- version comparison (latest JSON vs previous) ---------- */
 
     async function runVersionComparison() {
+      try {
       if (!window.HTSCompare) {
         recompareBtn.disabled = true;
         diffJsonBtn.disabled = true;
@@ -977,7 +1353,22 @@
         },
         summary: { added, removed, modified, total: results.length },
         results,
+        removalTasks: [],
+        createTasks: [],
+        updateTasks: [],
       };
+
+      try {
+        const sync = await buildAndPersistAllHtsTasks(lastDiffPayload);
+        lastDiffPayload.removalTasks = sync.removalTasks;
+        lastDiffPayload.createTasks = sync.createTasks;
+        lastDiffPayload.updateTasks = sync.updateTasks;
+      } catch (e) {
+        console.warn('HTS sync tasks failed', e);
+        lastDiffPayload.removalTasks = [];
+        lastDiffPayload.createTasks = [];
+        lastDiffPayload.updateTasks = [];
+      }
 
       cmpBanner.innerHTML =
         '<strong>Previous (older)</strong> — ' + escapeHtml(prevMeta.originalName) +
@@ -985,12 +1376,18 @@
         '<strong>Latest (newer)</strong> — ' + escapeHtml(latestMeta.originalName) +
         ' &middot; ' + escapeHtml(fmtTimestamp(latestMeta.uploadedAt));
 
+      const rt = lastDiffPayload.removalTasks || [];
+      const ct = lastDiffPayload.createTasks || [];
+      const ut = lastDiffPayload.updateTasks || [];
+      const taskCount = rt.length + ct.length + ut.length;
       cmpStats.innerHTML =
         '<span class="cmp-stat added">Added: ' + added + '</span>' +
         '<span class="cmp-stat removed">Removed: ' + removed + '</span>' +
         '<span class="cmp-stat modified">Modified: ' + modified + '</span>' +
         '<span class="cmp-stat" style="background:rgba(255,255,255,0.08);color:#a1a1aa;">Total changes: ' +
-        results.length + '</span>';
+        results.length + '</span>' +
+        '<span class="cmp-stat" style="background:rgba(99,102,241,0.15);color:#a5b4fc;" title="Pending sync tasks: create, update, remove (deduped per version pair)">Sync tasks: ' +
+        taskCount + '</span>';
 
       diffViewFilter = 'all';
       diffSearchQuery = '';
@@ -1002,6 +1399,9 @@
       diffEmpty.hidden = true;
       diffContent.hidden = false;
       diffJsonBtn.disabled = false;
+    } finally {
+      refreshTaskDashboard().catch(function () {});
+    }
     }
 
     /* ---------- validation ---------- */
@@ -1188,6 +1588,244 @@
         .replace(/'/g, '&#39;');
     }
 
+    function normalizeTaskStatus(s) {
+      if (TASK_VALID_STATUSES.indexOf(s) !== -1) return s;
+      return 'Pending';
+    }
+
+    function taskChangeTypeFromTask(task) {
+      const id = String(task.id || '');
+      if (id.indexOf('create:') === 0) return 'added';
+      if (id.indexOf('removal:') === 0) return 'removed';
+      if (id.indexOf('update:') === 0) return 'modified';
+      const a = task.taskAction || '';
+      if (a.indexOf('Create new entry') !== -1) return 'added';
+      if (a.indexOf('Remove') !== -1) return 'removed';
+      if (a.indexOf('Update existing') !== -1) return 'modified';
+      return 'added';
+    }
+
+    function scheduleSaveTaskError(taskId, value) {
+      if (errSaveTimers[taskId]) clearTimeout(errSaveTimers[taskId]);
+      errSaveTimers[taskId] = setTimeout(function () {
+        delete errSaveTimers[taskId];
+        applyTaskLastError(taskId, value).catch(function (e) {
+          console.warn(e);
+        });
+      }, 400);
+    }
+
+    async function applyTaskLastError(taskId, text) {
+      const task = await dbGetSyncTask(taskId);
+      if (!task || normalizeTaskStatus(task.status) !== 'Failed') return;
+      await dbPutSyncTask(
+        Object.assign({}, task, {
+          lastError: text ? String(text).trim() || null : null,
+          updatedAt: new Date().toISOString(),
+        })
+      );
+    }
+
+    async function applyTaskStatusUpdate(taskId, status) {
+      const task = await dbGetSyncTask(taskId);
+      if (!task) return;
+      const norm = normalizeTaskStatus(status);
+      const next = Object.assign({}, task, {
+        status: norm,
+        updatedAt: new Date().toISOString(),
+      });
+      if (norm === 'Failed') {
+        if (next.lastError === undefined) next.lastError = task.lastError != null ? task.lastError : null;
+      } else {
+        next.lastError = null;
+      }
+      try {
+        await dbPutSyncTask(next);
+      } catch (e) {
+        console.warn(e);
+      }
+      await refreshTaskDashboard();
+    }
+
+    function taskVersionSummaryHtml(task) {
+      const vr = task.versionReference;
+      if (!vr || !vr.previous || !vr.latest) return '—';
+      const p = (vr.previous.originalName || '').slice(0, 28);
+      const l = (vr.latest.originalName || '').slice(0, 28);
+      const when = (vr.comparedAt || '').slice(0, 19).replace('T', ' ');
+      return (
+        escapeHtml(p) +
+        ' → ' +
+        escapeHtml(l) +
+        (when ? '<div class="task-dash-meta">' + escapeHtml(when) + '</div>' : '')
+      );
+    }
+
+    async function refreshTaskDashboard() {
+      const summaryEl = $('taskDashSummary');
+      const tbody = $('taskDashTbody');
+      const emptyEl = $('taskDashEmpty');
+      const scrollEl = $('taskDashScroll');
+      if (!tbody || !summaryEl || !emptyEl || !scrollEl) return;
+
+      let tasks;
+      try {
+        tasks = await dbListAllSyncTasks();
+      } catch (e) {
+        summaryEl.innerHTML =
+          '<span class="task-dash-pill fail">Could not load tasks: ' + escapeHtml(e.message || String(e)) + '</span>';
+        tbody.innerHTML = '';
+        emptyEl.hidden = false;
+        scrollEl.hidden = true;
+        return;
+      }
+
+      tasks = tasks.map(function (t) {
+        return Object.assign({}, t, { status: normalizeTaskStatus(t.status) });
+      });
+      tasks.sort(function (a, b) {
+        const ta = (a.updatedAt || a.createdAt || '').localeCompare(b.updatedAt || b.createdAt || '');
+        return -ta;
+      });
+
+      const counts = { Pending: 0, 'In Progress': 0, Completed: 0, Failed: 0 };
+      for (let i = 0; i < tasks.length; i++) {
+        const st = tasks[i].status;
+        if (counts[st] != null) counts[st]++;
+      }
+
+      summaryEl.innerHTML =
+        '<span class="task-dash-pill">Total: ' + tasks.length + '</span>' +
+        '<span class="task-dash-pill pend">Pending: ' + counts.Pending + '</span>' +
+        '<span class="task-dash-pill prog">In progress: ' + counts['In Progress'] + '</span>' +
+        '<span class="task-dash-pill done">Completed: ' + counts.Completed + '</span>' +
+        '<span class="task-dash-pill fail">Failed: ' + counts.Failed + '</span>';
+
+      const filtered = tasks.filter(function (t) {
+        if (dashChangeFilter !== 'all' && taskChangeTypeFromTask(t) !== dashChangeFilter) return false;
+        if (dashStatusFilter !== 'all' && t.status !== dashStatusFilter) return false;
+        return true;
+      });
+
+      if (tasks.length === 0) {
+        emptyEl.hidden = false;
+        scrollEl.hidden = true;
+        tbody.innerHTML = '';
+        return;
+      }
+
+      emptyEl.hidden = true;
+      scrollEl.hidden = false;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML =
+          '<tr><td colspan="4" class="task-dash-meta" style="padding:20px;text-align:center;">No tasks match the current filters.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered
+        .map(function (task) {
+          const ch = taskChangeTypeFromTask(task);
+          const typeLabel = ch === 'added' ? 'Added' : ch === 'removed' ? 'Removed' : 'Modified';
+          const typeClass = ch;
+          const tid = escapeHtml(task.id);
+          const exported = normalizeSyncTaskForExport(task);
+          const action = escapeHtml(exported.taskAction || '—');
+          const code = escapeHtml(task.htsCode || '—');
+          const sel = task.status;
+          const errSection =
+            sel === 'Failed'
+              ? '<div class="task-err-box">' +
+                '<div class="task-err-label">Error detail</div>' +
+                '<textarea data-task-error="1" data-task-id="' +
+                tid +
+                '" placeholder="Describe what failed…" aria-label="Error message for this task">' +
+                escapeHtml(task.lastError || '') +
+                '</textarea></div>'
+              : '';
+
+          return (
+            '<tr data-task-row="' +
+            tid +
+            '">' +
+            '<td><span class="task-type-tag ' +
+            typeClass +
+            '">' +
+            typeLabel +
+            '</span></td>' +
+            '<td><div class="task-dash-code">' +
+            code +
+            '</div><div class="task-dash-meta">' +
+            action +
+            '</div>' +
+            errSection +
+            '</td>' +
+            '<td><select class="task-status-select" data-task-id="' +
+            tid +
+            '" aria-label="Status for ' +
+            code +
+            '">' +
+            TASK_VALID_STATUSES.map(function (st) {
+              return (
+                '<option value="' +
+                escapeHtml(st) +
+                '"' +
+                (st === sel ? ' selected' : '') +
+                '>' +
+                escapeHtml(st) +
+                '</option>'
+              );
+            }).join('') +
+            '</select></td>' +
+            '<td>' +
+            taskVersionSummaryHtml(task) +
+            '</td>' +
+            '</tr>'
+          );
+        })
+        .join('');
+    }
+
+    function wireTaskDashboard() {
+      const root = $('taskDashRoot');
+      if (!root || root.dataset.wired) return;
+      root.dataset.wired = '1';
+      root.addEventListener('change', function (e) {
+        const sel = e.target && e.target.closest && e.target.closest('select.task-status-select');
+        if (!sel) return;
+        const id = sel.getAttribute('data-task-id');
+        if (!id) return;
+        applyTaskStatusUpdate(id, sel.value).catch(function (err) {
+          console.warn(err);
+        });
+      });
+      root.addEventListener('input', function (e) {
+        const ta = e.target && e.target.closest && e.target.closest('textarea[data-task-error]');
+        if (!ta) return;
+        const id = ta.getAttribute('data-task-id');
+        if (!id) return;
+        scheduleSaveTaskError(id, ta.value);
+      });
+      root.querySelectorAll('.dash-change-tab').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const v = btn.getAttribute('data-dash-change') || 'all';
+          dashChangeFilter = v;
+          root.querySelectorAll('.dash-change-tab').forEach(function (b) {
+            const on = (b.getAttribute('data-dash-change') || 'all') === v;
+            b.setAttribute('aria-pressed', on);
+          });
+          refreshTaskDashboard();
+        });
+      });
+      const sf = $('dashStatusFilter');
+      if (sf) {
+        sf.addEventListener('change', function () {
+          dashStatusFilter = sf.value || 'all';
+          refreshTaskDashboard();
+        });
+      }
+    }
+
     /* ---------- history ---------- */
 
     async function refreshHistory() {
@@ -1305,6 +1943,8 @@
       );
       submitBtn.disabled = true;
     }
+
+    wireTaskDashboard();
 
     (async function init() {
       await refreshHistory();
